@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Fun Paeds</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-512.png" />
+  <link rel="apple-touch-icon" href="icon-512.png" />
+
+  <style>
+    :root { font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; background: #f2f4f7; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 16px; }
+    .topbar { display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom: 12px; }
+    .title { font-size: 22px; font-weight: 850; margin: 0; }
+    .menu { display:flex; gap:10px; align-items:center; }
+    .menu label { font-weight:700; }
+    .menu select { padding: 10px 12px; border-radius: 12px; border: 1px solid #d0d5dd; font-size: 15px; background:#fff; }
+
+    .card { background: white; border-radius: 16px; padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.08); margin-bottom: 14px; }
+    .grid { display: grid; gap: 12px; }
+    .row { display: grid; gap: 6px; }
+    label { font-weight: 650; display: flex; justify-content: space-between; align-items:center; gap:10px; }
+    .unit { color: #667085; font-weight: 500; white-space:nowrap; }
+    input, select {
+      padding: 12px; border-radius: 12px; border: 1px solid #d0d5dd; font-size: 16px; outline: none;
+      background: #fff;
+    }
+
+    .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .seg button {
+      border: 1px solid #d0d5dd; background: #fff; padding: 10px 8px; border-radius: 12px; font-weight: 750;
+    }
+    .seg button.active { background: #0ea5e9; border-color: #0ea5e9; color: #fff; }
+
+    .results h3 { margin: 0 0 10px; }
+    .rrow { display:flex; justify-content: space-between; padding: 6px 0; gap:12px; }
+    .bold { font-weight: 850; }
+    .warn { color: #b45309; font-weight: 650; margin-top: 8px; }
+    .ok { color:#067647; font-weight: 650; margin-top:8px; }
+    .foot { color: #667085; font-size: 12px; margin-top: 10px; line-height:1.3; }
+    .small { font-size: 13px; color:#475467; line-height:1.35; }
+    .divider { height:1px; background:#eaecf0; margin: 10px 0; }
+
+    .two { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 760px){ .two { grid-template-columns: 1fr; } .topbar { flex-direction:column; align-items:stretch; } }
+
+    .helpbtn {
+      width: 22px; height: 22px; border-radius: 999px;
+      border: 1px solid #d0d5dd; background:#fff; font-weight: 900;
+      display:inline-flex; align-items:center; justify-content:center;
+      cursor:pointer; user-select:none; flex:0 0 auto;
+    }
+    .helpbox {
+      margin-top: 8px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #eaecf0;
+      color:#344054;
+      font-size: 13px;
+      line-height:1.35;
+      display:none;
+    }
+
+    .inline { display:flex; gap:10px; align-items:center; }
+    .inline > * { flex:1; }
+    .inline .tight { flex:0 0 150px; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title">Fun Paeds</div>
+      <div class="menu">
+        <label for="calcSelect">Calculator</label>
+        <select id="calcSelect">
+          <option value="fluids">Fluids</option>
+          <option value="ballard">Ballard Score</option>
+          <option value="thompson">Thompson Score</option>
+          <option value="jaundice">Jaundice (Photo/Exchange)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ===================== FLUIDS ===================== -->
+    <section id="sec-fluids">
+      <div class="card">
+        <div class="grid">
+
+          <div class="row">
+            <label>Weight <span class="unit">g</span></label>
+            <input id="weightG" inputmode="decimal" placeholder="e.g. 1200" />
+          </div>
+
+          <div class="row">
+            <label>
+              TFI
+              <span class="unit">value + unit</span>
+            </label>
+            <div class="inline">
+              <input id="tfi" inputmode="decimal" placeholder="e.g. 80" />
+              <select id="tfiUnit" class="tight" aria-label="TFI unit">
+                <option value="day" selected>mL/kg/day</option>
+                <option value="hour">mL/kg/hour</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Feed frequency <span class="unit">hours</span></label>
+            <input id="freqH" inputmode="decimal" value="3" />
+          </div>
+
+          <div class="row">
+            <label>
+              I’m entering
+              <span class="inline" style="gap:6px; justify-content:flex-end;">
+                <span class="helpbtn" id="helpFluidsBtn">?</span>
+              </span>
+            </label>
+            <div class="seg">
+              <button id="m1" class="active" type="button">EBM/feed</button>
+              <button id="m2" type="button">IVF rate</button>
+              <button id="m3" type="button">IVF/day</button>
+              <button id="m4" type="button">Totals</button>
+            </div>
+            <div class="helpbox" id="helpFluidsBox">
+              Use <b>mL/kg/day</b> for routine daily totals. Use <b>mL/kg/hour</b> when your protocol prescribes an hourly TFI (e.g., hypernatremic dehydration).<br/>
+              Mode tips: <b>Totals</b> lets you enter EBM/day and IVF/day directly and shows “Actual TFI”.
+            </div>
+          </div>
+
+          <div class="row" id="ebmRow">
+            <label>EBM per feed <span class="unit">mL</span></label>
+            <input id="ebmFeed" inputmode="decimal" placeholder="e.g. 5" />
+          </div>
+
+          <div class="row" id="ivfRateRow" style="display:none">
+            <label>IVF rate <span class="unit">mL/hr</span></label>
+            <input id="ivfRate" inputmode="decimal" placeholder="e.g. 1.67" />
+          </div>
+
+          <div class="row" id="ivfDayRow" style="display:none">
+            <label>IVF daily <span class="unit">mL/day</span></label>
+            <input id="ivfDay" inputmode="decimal" placeholder="e.g. 40" />
+          </div>
+
+          <div class="row" id="totalsRow" style="display:none">
+            <label>EBM daily <span class="unit">mL/day</span></label>
+            <input id="ebmDayIn" inputmode="decimal" placeholder="e.g. 40" />
+            <div style="height:10px"></div>
+            <label>IVF daily <span class="unit">mL/day</span></label>
+            <input id="ivfDayIn2" inputmode="decimal" placeholder="e.g. 40" />
+          </div>
+
+          <div class="row" id="roundRow" style="display:none">
+            <label>Round EBM/feed to</label>
+            <select id="roundStep">
+              <option value="0">None</option>
+              <option value="0.5" selected>0.5 mL</option>
+              <option value="1">1 mL</option>
+              <option value="2">2 mL</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card results">
+        <h3>Results</h3>
+
+        <div class="rrow"><span>Total (from TFI)</span><span id="total" class="bold">—</span></div>
+        <div class="rrow"><span>Total per hour</span><span id="totalHr" class="bold">—</span></div>
+
+        <div class="rrow"><span>EBM/day</span><span id="ebmDay">—</span></div>
+        <div class="rrow" id="ebmFeedNeededRow" style="display:none"><span>EBM/feed (needed)</span><span id="ebmFeedNeeded" class="bold">—</span></div>
+
+        <div class="rrow"><span>IVF/day</span><span id="ivfDayOut" class="bold">—</span></div>
+        <div class="rrow"><span>IVF rate</span><span id="ivfRateOut" class="bold">—</span></div>
+
+        <div class="rrow"><span>Delivered</span><span id="deliveredOut">—</span></div>
+        <div class="rrow"><span>Actual TFI</span><span id="actualTfiOut" class="bold">—</span></div>
+        <div class="rrow"><span>Actual TFI/hour</span><span id="actualTfiHrOut" class="bold">—</span></div>
+
+        <div class="warn" id="warn"></div>
+        <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
+      </div>
+    </section>
+
+    <!-- ===================== BALLARD ===================== -->
+    <section id="sec-ballard" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Ballard score entry
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpBallardBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpBallardBox">
+            Select the score for each Ballard item using your Ballard reference sheet (score meanings depend on the chart images).<br/>
+            This calculator totals the score and converts to an approximate GA using the standard linear mapping used in Ballard tables.
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Sex for genital scoring</label>
+          <select id="ballardSex">
+            <option value="male" selected>Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="two">
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 10px">Neuromuscular</h3>
+            <div class="grid" id="ballard-neuro"></div>
+          </div>
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 10px">Physical</h3>
+            <div class="grid" id="ballard-phys"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Neuro subtotal</span><span id="ballardNeuroOut" class="bold">—</span></div>
+        <div class="rrow"><span>Physical subtotal</span><span id="ballardPhysOut" class="bold">—</span></div>
+        <div class="rrow"><span>Total score</span><span id="ballardTotalOut" class="bold">—</span></div>
+        <div class="rrow"><span>Estimated GA</span><span id="ballardGaOut" class="bold">—</span></div>
+        <div class="foot">Tip: GA estimate is approximate; use best obstetric dating when available.</div>
+      </div>
+    </section>
+
+  <!-- ===================== THOMPSON ===================== -->
+<section id="sec-thompson" style="display:none">
+  <div class="card">
+    <div class="row">
+      <label>
+        Thompson score entry
+        <span class="inline" style="gap:6px; justify-content:flex-end;">
+          <span class="helpbtn" id="helpThompsonBtn">?</span>
+        </span>
+      </label>
+      <div class="helpbox" id="helpThompsonBox">
+        Choose the descriptor that best matches the baby for each sign. The score (0–3) is included in the option.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="grid" id="thompson-items"></div>
+  </div>
+
+  <div class="card results">
+    <h3>Results</h3>
+    <div class="rrow"><span>Total</span><span id="thompsonTotalOut" class="bold">—</span></div>
+    <div class="rrow"><span>Severity (rule-of-thumb)</span><span id="thompsonSeverityOut" class="bold">—</span></div>
+    <div class="foot">Interpretation thresholds vary by protocol; always use clinical judgement + local HIE pathway.</div>
+  </div>
+</section>
+
+    <!-- ===================== JAUNDICE ===================== -->
+    <section id="sec-jaundice" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Jaundice thresholds
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpJaundiceBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpJaundiceBox">
+            Enter age (hours) and TSB (µmol/L), then choose the appropriate GA/weight line group.
+            The calculator interpolates phototherapy/exchange thresholds from the chart lines and tells you whether TSB is below/on/above.
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid">
+          <div class="row">
+            <label>Age <span class="unit">hours</span></label>
+            <input id="jnAgeH" inputmode="decimal" placeholder="e.g. 36" />
+          </div>
+
+          <div class="row">
+            <label>TSB <span class="unit">µmol/L</span></label>
+            <input id="jnTsb" inputmode="decimal" placeholder="e.g. 220" />
+          </div>
+
+          <div class="row">
+            <label>Choose line by GA/weight group <span class="unit">(use chart legend)</span></label>
+            <select id="jnGroup">
+              <option value="g38">≥38 wks or ≥3000 g</option>
+              <option value="g35">35–37 wks or 2500–2999 g</option>
+              <option value="g34">34 wks or 2000–2499 g</option>
+              <option value="g32">32–33 wks or 1500–1999 g</option>
+              <option value="g30">30–31 wks or 1250–1499 g</option>
+              <option value="g28">28–29 wks or 1000–1249 g</option>
+              <option value="glt28">&lt;28 wks or &lt;1000 g</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label>Tolerance for “on the line” <span class="unit">µmol/L</span></label>
+            <input id="jnTol" inputmode="decimal" value="5" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Phototherapy line at age</span><span id="jnPhotoLine" class="bold">—</span></div>
+        <div class="rrow"><span>Exchange line at age</span><span id="jnExLine" class="bold">—</span></div>
+        <div class="rrow"><span>Vs phototherapy</span><span id="jnVsPhoto" class="bold">—</span></div>
+        <div class="rrow"><span>Vs exchange</span><span id="jnVsEx" class="bold">—</span></div>
+        <div class="divider"></div>
+        <div id="jnAdvice" class="ok"></div>
+        <div id="jnWarn" class="warn"></div>
+        <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  // ===================== PWA SERVICE WORKER =====================
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+  }
+
+  // ===================== NAVIGATION =====================
+  const calcSelect = document.getElementById("calcSelect");
+  const sections = {
+    fluids: document.getElementById("sec-fluids"),
+    ballard: document.getElementById("sec-ballard"),
+    thompson: document.getElementById("sec-thompson"),
+    jaundice: document.getElementById("sec-jaundice"),
+  };
+  function showSection(key){
+    Object.entries(sections).forEach(([k, el]) => el.style.display = (k===key) ? "" : "none");
+    calcSelect.value = key;
+    location.hash = key;
+  }
+  calcSelect.addEventListener("change", () => showSection(calcSelect.value));
+  const start = (location.hash || "#fluids").replace("#","");
+  showSection(sections[start] ? start : "fluids");
+
+  // ===================== HELP TOGGLES =====================
+  function toggleHelp(btnId, boxId){
+    const b = document.getElementById(btnId);
+    const box = document.getElementById(boxId);
+    if(!b || !box) return;
+    b.addEventListener("click", () => {
+      box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
+    });
+  }
+  toggleHelp("helpFluidsBtn","helpFluidsBox");
+  toggleHelp("helpBallardBtn","helpBallardBox");
+  toggleHelp("helpThompsonBtn","helpThompsonBox");
+  toggleHelp("helpJaundiceBtn","helpJaundiceBox");
+
+  // ===================== COMMON HELPERS =====================
+  const el = (id)=>document.getElementById(id);
+
+  function numOrNull(v){
+    if(v==null) return null;
+    v = String(v).trim().replace(",",".");
+    if(v === "") return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  function clamp0(n){ return n == null ? null : Math.max(0, n); }
+  function fmt(n, dp=2){ return n==null ? "—" : n.toFixed(dp); }
+  function roundToStep(value, step){
+    if(!step || step<=0) return value;
+    return Math.round(value/step)*step;
+  }
+  function interp(points, x){
+    if(points.length===0) return null;
+    if(x <= points[0][0]) return points[0][1];
+    if(x >= points[points.length-1][0]) return points[points.length-1][1];
+    for(let i=0;i<points.length-1;i++){
+      const [x1,y1]=points[i], [x2,y2]=points[i+1];
+      if(x>=x1 && x<=x2){
+        const t=(x-x1)/(x2-x1);
+        return y1 + t*(y2-y1);
+      }
+    }
+    return null;
+  }
+  function compareToLine(value, line, tol){
+    if(value==null || line==null) return "—";
+    const d = value - line;
+    if(Math.abs(d) <= tol) return "ON";
+    return d > 0 ? "ABOVE" : "BELOW";
+  }
+
+  // ===================== FLUIDS CALCULATOR =====================
+  let mode = "EBM"; // EBM, IVFRATE, IVFDAY, TOTALS
+  const m1 = el("m1"), m2 = el("m2"), m3 = el("m3"), m4 = el("m4");
+  const ebmRow = el("ebmRow");
+  const ivfRateRow = el("ivfRateRow");
+  const ivfDayRow = el("ivfDayRow");
+  const totalsRow = el("totalsRow");
+  const roundRow = el("roundRow");
+  const ebmFeedNeededRow = el("ebmFeedNeededRow");
+
+  function setMode(newMode){
+    mode = newMode;
+    m1.classList.toggle("active", mode==="EBM");
+    m2.classList.toggle("active", mode==="IVFRATE");
+    m3.classList.toggle("active", mode==="IVFDAY");
+    m4.classList.toggle("active", mode==="TOTALS");
+
+    ebmRow.style.display = (mode==="EBM") ? "" : "none";
+    ivfRateRow.style.display = (mode==="IVFRATE") ? "" : "none";
+    ivfDayRow.style.display = (mode==="IVFDAY") ? "" : "none";
+    totalsRow.style.display = (mode==="TOTALS") ? "" : "none";
+
+    const showFeedNeeded = (mode==="IVFRATE" || mode==="IVFDAY" || mode==="TOTALS");
+    roundRow.style.display = showFeedNeeded ? "" : "none";
+    ebmFeedNeededRow.style.display = showFeedNeeded ? "" : "none";
+
+    calcFluids();
+  }
+  m1.onclick = ()=>setMode("EBM");
+  m2.onclick = ()=>setMode("IVFRATE");
+  m3.onclick = ()=>setMode("IVFDAY");
+  m4.onclick = ()=>setMode("TOTALS");
+
+  ["weightG","tfi","tfiUnit","freqH","ebmFeed","ivfRate","ivfDay","ebmDayIn","ivfDayIn2","roundStep"]
+    .map(el).forEach(x => x && x.addEventListener("input", calcFluids));
+  el("tfiUnit").addEventListener("change", calcFluids);
+  el("roundStep").addEventListener("change", calcFluids);
+
+  function calcFluids(){
+    const wG = numOrNull(el("weightG").value);
+    const tfiVal = numOrNull(el("tfi").value);
+    const tfiUnit = el("tfiUnit").value; // "day" or "hour"
+    const h = numOrNull(el("freqH").value);
+    const warn = el("warn");
+    warn.textContent = "";
+
+    const wKg = (wG != null && wG > 0) ? (wG/1000) : null;
+    const feedsPerDay = (h != null && h > 0) ? (24/h) : null;
+
+    // Convert TFI to daily equivalent
+    // If entered as mL/kg/hour, daily = *24
+    const tfiDaily = (tfiVal!=null) ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal) : null;
+
+    const total = (wKg!=null && tfiDaily!=null) ? (wKg*tfiDaily) : null;
+    const totalPerHour = (total!=null) ? (total/24) : null;
+
+    const ebmFeedIn = clamp0(numOrNull(el("ebmFeed").value));
+    const ivfRateIn = clamp0(numOrNull(el("ivfRate").value));
+    const ivfDayIn  = clamp0(numOrNull(el("ivfDay").value));
+    const ebmDayIn  = clamp0(numOrNull(el("ebmDayIn").value));
+    const ivfDayIn2 = clamp0(numOrNull(el("ivfDayIn2").value));
+
+    let ebmDay = null, ivfDay = null;
+
+    if(mode==="EBM"){
+      if(total != null && feedsPerDay != null && ebmFeedIn != null){
+        ebmDay = ebmFeedIn * feedsPerDay;
+        ivfDay = Math.max(0, total - ebmDay);
+        if(ebmDay > total) warn.textContent = "EBM exceeds total — IVF set to 0.";
+      }
+    }
+
+    if(mode==="IVFRATE"){
+      if(ivfRateIn != null) ivfDay = ivfRateIn * 24;
+      if(total != null && ivfDay != null){
+        ebmDay = Math.max(0, total - ivfDay);
+        if(ivfDay > total) warn.textContent = "IVF exceeds total — EBM set to 0.";
+      }
+    }
+
+    if(mode==="IVFDAY"){
+      if(ivfDayIn != null) ivfDay = ivfDayIn;
+      if(total != null && ivfDay != null){
+        ebmDay = Math.max(0, total - ivfDay);
+        if(ivfDay > total) warn.textContent = "IVF exceeds total — EBM set to 0.";
+      }
+    }
+
+    if(mode==="TOTALS"){
+      if(ebmDayIn != null) ebmDay = ebmDayIn;
+      if(ivfDayIn2 != null) ivfDay = ivfDayIn2;
+      if(total != null && ((ebmDay ?? 0) + (ivfDay ?? 0)) > total){
+        warn.textContent = "Delivered exceeds Total (TFI target).";
+      }
+    }
+
+    const ivfRateOut = (ivfDay!=null) ? (ivfDay/24) : null;
+
+    let ebmFeedNeeded = null;
+    if((mode==="IVFRATE" || mode==="IVFDAY" || mode==="TOTALS") && ebmDay!=null && feedsPerDay!=null && feedsPerDay>0){
+      ebmFeedNeeded = ebmDay/feedsPerDay;
+      const step = numOrNull(el("roundStep").value);
+      ebmFeedNeeded = roundToStep(ebmFeedNeeded, step);
+    }
+
+    const hasAnyDaily = (ebmDay != null) || (ivfDay != null);
+    const deliveredDay = ( (ebmDay ?? 0) + (ivfDay ?? 0) );
+    const actualTfi = (wKg != null && wKg > 0 && hasAnyDaily) ? (deliveredDay / wKg) : null;      // mL/kg/day
+    const actualTfiHr = (actualTfi != null) ? (actualTfi / 24) : null;                              // mL/kg/hr
+
+    el("total").textContent = total==null ? "—" : `${fmt(total)} mL/day`;
+    el("totalHr").textContent = totalPerHour==null ? "—" : `${fmt(totalPerHour)} mL/hr`;
+
+    el("ebmDay").textContent = ebmDay==null ? "—" : `${fmt(ebmDay)} mL/day`;
+    el("ivfDayOut").textContent = ivfDay==null ? "—" : `${fmt(ivfDay)} mL/day`;
+    el("ivfRateOut").textContent = ivfRateOut==null ? "—" : `${fmt(ivfRateOut)} mL/hr`;
+    el("ebmFeedNeeded").textContent = ebmFeedNeeded==null ? "—" : `${fmt(ebmFeedNeeded)} mL/feed`;
+
+    el("deliveredOut").textContent = hasAnyDaily ? `${fmt(deliveredDay)} mL/day` : "—";
+    el("actualTfiOut").textContent = actualTfi==null ? "—" : `${fmt(actualTfi)} mL/kg/day`;
+    el("actualTfiHrOut").textContent = actualTfiHr==null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
+  }
+  calcFluids();
+
+  // ===================== BALLARD SCORE =====================
+  // Note: For score meanings/descriptors, use your Ballard reference sheet.
+  const ballardNeuroItems = ["Posture","Square window","Arm recoil","Popliteal angle","Scarf sign","Heel to ear"];
+  const ballardPhysBase   = ["Skin","Lanugo","Plantar surface","Breast","Eye/Ear"];
+  const ballardGenMale    = "Genitals (Male)";
+  const ballardGenFemale  = "Genitals (Female)";
+
+  function makeScoreSelect(id, min, max, step=1){
+    const s = document.createElement("select");
+    s.id = id;
+    for(let v=min; v<=max; v+=step){
+      const opt = document.createElement("option");
+      opt.value = String(v);
+      opt.textContent = String(v);
+      s.appendChild(opt);
+    }
+    return s;
+  }
+
+  function makeHelpRow(text){
+    const box = document.createElement("div");
+    box.className = "helpbox";
+    box.style.display = "none";
+    box.textContent = text;
+    return box;
+  }
+
+  function renderBallard(){
+    const neuro = el("ballard-neuro");
+    const phys  = el("ballard-phys");
+    neuro.innerHTML = "";
+    phys.innerHTML = "";
+
+    ballardNeuroItems.forEach((name,i)=>{
+      const row = document.createElement("div");
+      row.className="row";
+
+      const lab = document.createElement("label");
+      const left = document.createElement("span");
+      left.textContent = name;
+      const help = document.createElement("span");
+      help.className="helpbtn";
+      help.textContent="?";
+      lab.appendChild(left);
+      lab.appendChild(help);
+
+      const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors.`);
+
+      const sel = makeScoreSelect(`bN${i}`, -1, 5, 1);
+      sel.addEventListener("change", calcBallard);
+      help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
+
+      row.appendChild(lab); row.appendChild(sel); row.appendChild(helpBox);
+      neuro.appendChild(row);
+    });
+
+    // Physical base items
+    ballardPhysBase.forEach((name,i)=>{
+      const row = document.createElement("div");
+      row.className="row";
+
+      const lab = document.createElement("label");
+      const left = document.createElement("span");
+      left.textContent = name;
+      const help = document.createElement("span");
+      help.className="helpbtn";
+      help.textContent="?";
+      lab.appendChild(left);
+      lab.appendChild(help);
+
+      const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors.`);
+      const sel = makeScoreSelect(`bP${i}`, -1, 5, 1);
+      sel.addEventListener("change", calcBallard);
+      help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
+
+      row.appendChild(lab); row.appendChild(sel); row.appendChild(helpBox);
+      phys.appendChild(row);
+    });
+
+    // Sex-specific genitals item (render container)
+    const genWrap = document.createElement("div");
+    genWrap.className="row";
+    genWrap.id = "ballardGenWrap";
+    phys.appendChild(genWrap);
+
+    el("ballardSex").addEventListener("change", renderBallardGenitals);
+    renderBallardGenitals();
+
+    calcBallard();
+  }
+
+  function renderBallardGenitals(){
+    const sex = el("ballardSex").value; // male/female
+    const genWrap = el("ballardGenWrap");
+    if(!genWrap) return;
+    genWrap.innerHTML = "";
+
+    const name = (sex === "male") ? ballardGenMale : ballardGenFemale;
+
+    const lab = document.createElement("label");
+    const left = document.createElement("span");
+    left.textContent = name;
+    const help = document.createElement("span");
+    help.className="helpbtn";
+    help.textContent="?";
+    lab.appendChild(left);
+    lab.appendChild(help);
+
+    const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors (sex-specific).`);
+
+    // Use a dedicated id so both sexes don't share state unexpectedly
+    const selId = (sex === "male") ? "bGm" : "bGf";
+    const sel = makeScoreSelect(selId, -1, 5, 1);
+    sel.addEventListener("change", calcBallard);
+    help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
+
+    genWrap.appendChild(lab);
+    genWrap.appendChild(sel);
+    genWrap.appendChild(helpBox);
+
+    calcBallard();
+  }
+
+  function calcBallard(){
+    let neuro = 0, phys = 0;
+
+    for(let i=0;i<ballardNeuroItems.length;i++){
+      neuro += Number(el(`bN${i}`)?.value ?? 0);
+    }
+
+    for(let i=0;i<ballardPhysBase.length;i++){
+      phys += Number(el(`bP${i}`)?.value ?? 0);
+    }
+
+    // Add genital score based on selected sex (if exists)
+    const sex = el("ballardSex")?.value ?? "male";
+    const gId = (sex === "male") ? "bGm" : "bGf";
+    phys += Number(el(gId)?.value ?? 0);
+
+    const total = neuro + phys;
+
+    // Common Ballard linear mapping used in tables:
+    // Total score 0 → 24 weeks; each +5 points → +2 weeks (0.4 weeks per point).
+    const gaWeeks = 24 + 0.4 * total;
+
+    el("ballardNeuroOut").textContent = String(neuro);
+    el("ballardPhysOut").textContent = String(phys);
+    el("ballardTotalOut").textContent = String(total);
+    el("ballardGaOut").textContent = `${gaWeeks.toFixed(1)} weeks`;
+  }
+  renderBallard();
+
+ // ===================== THOMPSON SCORE =====================
+// Options are shown as "Description - score" but the stored value is the numeric score.
+// Edit labels if your local Thompson descriptors differ.
+
+const thompsonConfig = [
+  {
+    key: "tone",
+    name: "Tone",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Hypertonia", score: 1 },
+      { label: "Hypotonia", score: 2 },
+      { label: "Flaccid", score: 3 },
+    ],
+  },
+  {
+    key: "loc",
+    name: "Level of consciousness",
+    options: [
+      { label: "Normal / alert", score: 0 },
+      { label: "Hyperalert / irritable", score: 1 },
+      { label: "Lethargic", score: 2 },
+      { label: "Coma", score: 3 },
+    ],
+  },
+  {
+    key: "seiz",
+    name: "Seizures",
+    options: [
+      { label: "None", score: 0 },
+      { label: "Occasional", score: 1 },
+      { label: "Frequent", score: 2 },
+      { label: "Status epilepticus", score: 3 },
+    ],
+  },
+  {
+    key: "post",
+    name: "Posture",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Mild distal flexion", score: 1 },
+      { label: "Strong distal flexion / decorticate", score: 2 },
+      { label: "Decerebrate posture", score: 3 },
+    ],
+  },
+  {
+    key: "moro",
+    name: "Moro reflex",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Partial", score: 1 },
+      { label: "Weak", score: 2 },
+      { label: "Absent", score: 3 },
+    ],
+  },
+  {
+    key: "grasp",
+    name: "Grasp",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Poor", score: 1 },
+      { label: "Very weak", score: 2 },
+      { label: "Absent", score: 3 },
+    ],
+  },
+  {
+    key: "suck",
+    name: "Suck",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Poor", score: 1 },
+      { label: "Very weak", score: 2 },
+      { label: "Absent", score: 3 },
+    ],
+  },
+  {
+    key: "resp",
+    name: "Respiration",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Hyperventilation", score: 1 },
+      { label: "Periodic / irregular", score: 2 },
+      { label: "Apnoea / ventilated", score: 3 },
+    ],
+  },
+  {
+    key: "font",
+    name: "Fontanelle",
+    options: [
+      { label: "Normal", score: 0 },
+      { label: "Full", score: 1 },
+      { label: "Tense", score: 2 },
+      { label: "Bulging", score: 3 },
+    ],
+  },
+];
+
+function renderThompson(){
+  const host = el("thompson-items");
+  if(!host) return;
+  host.innerHTML = "";
+
+  thompsonConfig.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "row";
+
+    const lab = document.createElement("label");
+    const left = document.createElement("span");
+    left.textContent = item.name;
+    const help = document.createElement("span");
+    help.className = "helpbtn";
+    help.textContent = "?";
+    lab.appendChild(left);
+    lab.appendChild(help);
+
+    const helpBox = document.createElement("div");
+    helpBox.className = "helpbox";
+    helpBox.style.display = "none";
+    helpBox.textContent = `Pick the descriptor that best matches: "${item.name}".`;
+
+    const sel = document.createElement("select");
+    sel.id = `t_${item.key}`;
+
+    item.options.forEach(opt => {
+      const o = document.createElement("option");
+      o.value = String(opt.score);
+      o.textContent = `${opt.label} - ${opt.score}`;
+      sel.appendChild(o);
+    });
+
+    sel.addEventListener("change", calcThompson);
+    help.addEventListener("click", ()=> {
+      helpBox.style.display = (helpBox.style.display==="none" || helpBox.style.display==="") ? "block" : "none";
+    });
+
+    row.appendChild(lab);
+    row.appendChild(sel);
+    row.appendChild(helpBox);
+    host.appendChild(row);
+  });
+
+  calcThompson();
+}
+
+function calcThompson(){
+  let total = 0;
+  thompsonConfig.forEach(item => {
+    total += Number(el(`t_${item.key}`)?.value ?? 0);
+  });
+
+  el("thompsonTotalOut").textContent = String(total);
+
+  let sev = "—";
+  if(total <= 10) sev = "Mild";
+  else if(total <= 14) sev = "Moderate";
+  else sev = "Severe";
+  el("thompsonSeverityOut").textContent = sev;
+}
+
+renderThompson();
+
+  // ===================== JAUNDICE (PHOTO/EXCHANGE) =====================
+  // NOTE: These points are approximate interpolations from chart lines; validate with your local printed charts.
+  const photoLines = {
+    g38:   [[6,80],[12,120],[24,170],[36,210],[48,240],[60,265],[72,285],[84,300],[96,310],[108,315],[120,320]],
+    g35:   [[6,80],[12,110],[24,160],[36,200],[48,225],[60,245],[72,265],[84,275],[96,285],[108,290],[120,292]],
+    g34:   [[6,80],[12,100],[24,145],[36,180],[48,205],[60,225],[72,240],[84,245],[96,248],[108,250],[120,252]],
+    g32:   [[6,80],[12,95],[24,130],[36,160],[48,175],[60,185],[72,195],[84,198],[96,200],[108,200],[120,200]],
+    g30:   [[6,80],[12,90],[24,120],[36,145],[48,160],[60,170],[72,170],[84,170],[96,170],[108,170],[120,170]],
+    g28:   [[6,80],[12,85],[24,110],[36,130],[48,145],[60,150],[72,150],[84,150],[96,150],[108,150],[120,150]],
+    glt28: [[6,80],[12,80],[24,100],[36,120],[48,130],[60,130],[72,130],[84,130],[96,130],[108,130],[120,130]],
+  };
+
+  const exchangeLines = {
+    g38:   [[12,300],[24,330],[36,360],[48,380],[60,400],[72,415],[84,425],[96,430],[108,432],[120,433]],
+    g35:   [[12,260],[24,285],[36,310],[48,335],[60,355],[72,370],[84,380],[96,387],[108,390],[120,392]],
+    g34:   [[12,240],[24,260],[36,280],[48,295],[60,310],[72,320],[84,325],[96,327],[108,328],[120,330]],
+    g32:   [[12,230],[24,250],[36,265],[48,280],[60,290],[72,295],[84,298],[96,300],[108,300],[120,300]],
+    g30:   [[12,220],[24,235],[36,245],[48,255],[60,260],[72,260],[84,260],[96,260],[108,260],[120,260]],
+    g28:   [[12,210],[24,225],[36,235],[48,240],[60,240],[72,240],[84,240],[96,240],[108,240],[120,240]],
+    glt28: [[12,200],[24,215],[36,220],[48,220],[60,220],[72,220],[84,220],[96,220],[108,220],[120,220]],
+  };
+
+  ["jnAgeH","jnTsb","jnGroup","jnTol"].map(el).forEach(x => x && x.addEventListener("input", calcJaundice));
+  el("jnGroup").addEventListener("change", calcJaundice);
+
+  function calcJaundice(){
+    const ageH = numOrNull(el("jnAgeH").value);
+    const tsb  = numOrNull(el("jnTsb").value);
+    const grp  = el("jnGroup").value;
+    const tol  = Math.max(0, numOrNull(el("jnTol").value) ?? 5);
+
+    const photo = (ageH==null) ? null : interp(photoLines[grp], ageH);
+    const exch  = (ageH==null) ? null : interp(exchangeLines[grp], ageH);
+
+    el("jnPhotoLine").textContent = (photo==null) ? "—" : `${Math.round(photo)} µmol/L`;
+    el("jnExLine").textContent    = (exch==null)  ? "—" : `${Math.round(exch)} µmol/L`;
+
+    const vPhoto = compareToLine(tsb, photo, tol);
+    const vEx    = compareToLine(tsb, exch, tol);
+
+    el("jnVsPhoto").textContent = vPhoto;
+    el("jnVsEx").textContent    = vEx;
+
+    const advice = el("jnAdvice");
+    const warn = el("jnWarn");
+    advice.textContent = "";
+    warn.textContent = "";
+
+    if(ageH==null || tsb==null){
+      warn.textContent = "Enter age (hours) and TSB to calculate.";
+      return;
+    }
+
+    if(exch!=null && tsb >= exch){
+      advice.textContent = "Above exchange line: urgent senior review + prepare for exchange transfusion and intensive phototherapy.";
+      warn.textContent = "Confirm causes (haemolysis/sepsis), ensure temperature, glucose, hydration; follow local pathway.";
+      return;
+    }
+
+    if(photo!=null && tsb >= photo){
+      advice.textContent = "At/above phototherapy line: start intensive phototherapy now and recheck TSB per your local protocol.";
+      return;
+    }
+
+    if(photo!=null){
+      const diff = photo - tsb;
+      if(diff <= 20){
+        advice.textContent = "Within 0–20 µmol/L below phototherapy line: repeat TSB soon; consider early phototherapy if trending up/risk factors.";
+      } else if(diff <= 50){
+        advice.textContent = "21–50 µmol/L below phototherapy line: repeat TSB within ~12–24h (or sooner if risk factors).";
+      } else {
+        advice.textContent = ">50 µmol/L below phototherapy line: clinical monitoring and repeat TSB per context.";
+      }
+    } else {
+      warn.textContent = "Could not compute line for this age/group.";
+    }
+  }
+  calcJaundice();
+</script>
+</body>
+</html>
