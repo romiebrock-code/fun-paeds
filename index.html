@@ -72,48 +72,52 @@
     .inline > * { flex:1; }
     .inline .tight { flex:0 0 150px; }
 
-/* --- Ballard tap-cards --- */
-.cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-@media (max-width: 760px){ .cards { grid-template-columns: 1fr; } }
+    /* --- Ballard tap-cards --- */
+    .cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (max-width: 760px){ .cards { grid-template-columns: 1fr; } }
 
-.cardopt{
-  border: 1px solid #d0d5dd;
-  border-radius: 14px;
-  padding: 12px;
-  background: #fff;
-  cursor: pointer;
-  user-select: none;
-}
-.cardopt .top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-.cardopt .label { font-weight: 650; color:#101828; line-height:1.2; }
-.cardopt .score { font-weight: 900; color:#0ea5e9; white-space:nowrap; }
-.cardopt .sub { margin-top: 6px; color:#475467; font-size: 13px; line-height:1.35; }
+    .cardopt{
+      border: 1px solid #d0d5dd;
+      border-radius: 14px;
+      padding: 12px;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+    }
+    .cardopt .top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+    .cardopt .label { font-weight: 650; color:#101828; line-height:1.2; }
+    .cardopt .score { font-weight: 900; color:#0ea5e9; white-space:nowrap; }
+    .cardopt .sub { margin-top: 6px; color:#475467; font-size: 13px; line-height:1.35; }
 
-.cardopt.active{
-  border-color:#0ea5e9;
-  box-shadow: 0 0 0 3px rgba(14,165,233,.15);
-}
+    .cardopt.active{
+      border-color:#0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14,165,233,.15);
+    }
 
-.itemblock { border: 1px solid #eaecf0; border-radius: 16px; padding: 12px; }
-.itemhead { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 10px; }
-.itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
-.smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
+    .itemblock { border: 1px solid #eaecf0; border-radius: 16px; padding: 12px; }
+    .itemhead { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 10px; }
+    .itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
+    .smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
 
-/* Ballard neuro mini-icons (inline SVG) */
-.thumbsvg{
-  width: 78px;
-  height: 52px;
-  border-radius: 12px;
-  border: 1px solid #eaecf0;
-  background: #fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex: 0 0 auto;
-}
-.thumbsvg svg{ width: 72px; height: 44px; }
-.cardopt .top { align-items: center; }
-.cardopt .leftside { display:flex; gap:10px; align-items:center; }
+    /* Ballard maneuver illustration box (Option A) */
+    .maneuverBox{
+      margin: 8px 0 10px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid #eaecf0;
+      background: #f8fafc;
+    }
+    .maneuverBox .cap{
+      font-size: 12px;
+      color:#475467;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .maneuverBox svg{
+      width: 100%;
+      height: auto;
+      display:block;
+    }
   </style>
 </head>
 
@@ -237,89 +241,89 @@
       </div>
     </section>
 
- <!-- ===================== BALLARD ===================== -->
-<section id="sec-ballard" style="display:none">
-  <div class="card">
-    <div class="row">
-      <label>
-        Ballard (stand-alone)
-        <span class="inline" style="gap:6px; justify-content:flex-end;">
-          <span class="helpbtn" id="helpBallardBtn">?</span>
-        </span>
-      </label>
-      <div class="helpbox" id="helpBallardBox">
-        Tap the option that best matches what you see/examine. Each option includes the score.
-        The calculator totals the score and estimates GA. If you enter postnatal age, it also shows corrected GA.
+    <!-- ===================== BALLARD ===================== -->
+    <section id="sec-ballard" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Ballard (stand-alone)
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpBallardBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpBallardBox">
+            Tap the option that best matches what you see/examine. Each option includes the score.
+            The calculator totals the score and estimates GA. If you enter postnatal age, it also shows corrected GA.
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="row">
+            <label>Sex (for genital scoring)</label>
+            <select id="ballardSex">
+              <option value="male" selected>Male</option>
+              <option value="female">Female</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label>Age since birth <span class="unit">days (optional)</span></label>
+            <input id="ballardAgeDays" inputmode="decimal" placeholder="e.g. 10" />
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="two">
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 10px">Neuromuscular</h3>
+            <div class="grid" id="ballard-neuro"></div>
+          </div>
+
+          <div class="card" style="margin:0">
+            <h3 style="margin:0 0 10px">Physical</h3>
+            <div class="grid" id="ballard-phys"></div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="two">
-      <div class="row">
-        <label>Sex (for genital scoring)</label>
-        <select id="ballardSex">
-          <option value="male" selected>Male</option>
-          <option value="female">Female</option>
-        </select>
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Neuro subtotal</span><span id="ballardNeuroOut" class="bold">—</span></div>
+        <div class="rrow"><span>Physical subtotal</span><span id="ballardPhysOut" class="bold">—</span></div>
+        <div class="rrow"><span>Total score</span><span id="ballardTotalOut" class="bold">—</span></div>
+        <div class="rrow"><span>Estimated GA</span><span id="ballardGaOut" class="bold">—</span></div>
+        <div class="rrow"><span>Corrected GA</span><span id="ballardCgaOut" class="bold">—</span></div>
+        <div class="foot">Use best obstetric dating when available. Ballard is an estimate.</div>
+      </div>
+    </section>
+
+    <!-- ===================== THOMPSON ===================== -->
+    <section id="sec-thompson" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Thompson score entry
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpThompsonBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpThompsonBox">
+            Choose the descriptor that best matches the baby for each sign. The score (0–3) is included in the option.
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="grid" id="thompson-items"></div>
       </div>
 
-      <div class="row">
-        <label>Age since birth <span class="unit">days (optional)</span></label>
-        <input id="ballardAgeDays" inputmode="decimal" placeholder="e.g. 10" />
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Total</span><span id="thompsonTotalOut" class="bold">—</span></div>
+        <div class="rrow"><span>Severity (rule-of-thumb)</span><span id="thompsonSeverityOut" class="bold">—</span></div>
+        <div class="foot">Interpretation thresholds vary by protocol; always use clinical judgement + local HIE pathway.</div>
       </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="two">
-      <div class="card" style="margin:0">
-        <h3 style="margin:0 0 10px">Neuromuscular</h3>
-        <div class="grid" id="ballard-neuro"></div>
-      </div>
-
-      <div class="card" style="margin:0">
-        <h3 style="margin:0 0 10px">Physical</h3>
-        <div class="grid" id="ballard-phys"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card results">
-    <h3>Results</h3>
-    <div class="rrow"><span>Neuro subtotal</span><span id="ballardNeuroOut" class="bold">—</span></div>
-    <div class="rrow"><span>Physical subtotal</span><span id="ballardPhysOut" class="bold">—</span></div>
-    <div class="rrow"><span>Total score</span><span id="ballardTotalOut" class="bold">—</span></div>
-    <div class="rrow"><span>Estimated GA</span><span id="ballardGaOut" class="bold">—</span></div>
-    <div class="rrow"><span>Corrected GA</span><span id="ballardCgaOut" class="bold">—</span></div>
-    <div class="foot">Use best obstetric dating when available. Ballard is an estimate.</div>
-  </div>
-</section>
-
-  <!-- ===================== THOMPSON ===================== -->
-<section id="sec-thompson" style="display:none">
-  <div class="card">
-    <div class="row">
-      <label>
-        Thompson score entry
-        <span class="inline" style="gap:6px; justify-content:flex-end;">
-          <span class="helpbtn" id="helpThompsonBtn">?</span>
-        </span>
-      </label>
-      <div class="helpbox" id="helpThompsonBox">
-        Choose the descriptor that best matches the baby for each sign. The score (0–3) is included in the option.
-      </div>
-    </div>
-
-    <div class="divider"></div>
-    <div class="grid" id="thompson-items"></div>
-  </div>
-
-  <div class="card results">
-    <h3>Results</h3>
-    <div class="rrow"><span>Total</span><span id="thompsonTotalOut" class="bold">—</span></div>
-    <div class="rrow"><span>Severity (rule-of-thumb)</span><span id="thompsonSeverityOut" class="bold">—</span></div>
-    <div class="foot">Interpretation thresholds vary by protocol; always use clinical judgement + local HIE pathway.</div>
-  </div>
-</section>
+    </section>
 
     <!-- ===================== JAUNDICE ===================== -->
     <section id="sec-jaundice" style="display:none">
@@ -582,635 +586,568 @@
   }
   calcFluids();
 
-// ===================== BALLARD (TAP-CARDS, STAND-ALONE) =====================
-// Based on your attached chart (descriptors + scores). Some neuromuscular items are pictorial;
-// labels below follow the standard interpretation of those drawings.
+  // ===================== BALLARD (Option A: maneuver image + choices) =====================
 
-const ballardNeuroConfig = [
-  {
-    key: "posture",
-    name: "Posture",
-    hint: "Observe resting tone/flexion at rest.",
-    options: [
-      { label: "Extremities extended", sub: "Very little flexion at rest", score: 0 },
-      { label: "Slight flexion", sub: "Some flexion of hips/knees/arms", score: 1 },
-      { label: "Moderate flexion", sub: "More flexion in limbs", score: 2 },
-      { label: "Good flexion", sub: "Limbs clearly flexed", score: 3 },
-      { label: "Tight flexion", sub: "Strongly flexed posture", score: 4 },
-    ]
-  },
-  {
-    key: "square_window",
-    name: "Square window (wrist)",
-    hint: "Flex hand toward forearm; estimate angle at wrist.",
-    options: [
-      { label: "> 90°", sub: "Very limited flexion", score: -1 },
-      { label: "90°", sub: "", score: 0 },
-      { label: "60°", sub: "", score: 1 },
-      { label: "45°", sub: "", score: 2 },
-      { label: "30°", sub: "", score: 3 },
-      { label: "0°", sub: "Hand flat on forearm", score: 4 },
-    ]
-  },
-  {
-    key: "arm_recoil",
-    name: "Arm recoil",
-    hint: "Briefly extend arm, then release and see recoil angle.",
-    options: [
-      { label: "No recoil", sub: "Remains at ~180°", score: 0 },
-      { label: "Recoil 140–180°", sub: "", score: 1 },
-      { label: "Recoil 110–140°", sub: "", score: 2 },
-      { label: "Recoil 90–110°", sub: "", score: 3 },
-      { label: "Recoil < 90°", sub: "Strong recoil", score: 4 },
-    ]
-  },
-  {
-    key: "popliteal",
-    name: "Popliteal angle",
-    hint: "Flex thigh to abdomen then extend lower leg; estimate angle.",
-    options: [
-      { label: "180°", sub: "", score: -1 },
-      { label: "160°", sub: "", score: 0 },
-      { label: "140°", sub: "", score: 1 },
-      { label: "120°", sub: "", score: 2 },
-      { label: "100°", sub: "", score: 3 },
-      { label: "90°", sub: "", score: 4 },
-      { label: "< 90°", sub: "Marked resistance", score: 5 },
-    ]
-  },
-  {
-    key: "scarf",
-    name: "Scarf sign",
-    hint: "Pull arm across chest like a scarf; note where the elbow lands.",
-    options: [
-      { label: "Elbow crosses midline easily", sub: "Very little resistance", score: 0 },
-      { label: "Elbow reaches midline", sub: "", score: 1 },
-      { label: "Elbow does not reach midline", sub: "", score: 2 },
-      { label: "Elbow well short of midline", sub: "Clear resistance", score: 3 },
-      { label: "Marked resistance", sub: "Elbow far from midline", score: 4 },
-    ]
-  },
-  {
-    key: "heel_to_ear",
-    name: "Heel to ear",
-    hint: "Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.",
-    options: [
-      { label: "Heel reaches ear", sub: "Little resistance", score: 0 },
-      { label: "Heel approaches ear", sub: "Minimal resistance", score: 1 },
-      { label: "Moderate resistance", sub: "Heel not close to ear", score: 2 },
-      { label: "Good resistance", sub: "Heel far from ear", score: 3 },
-      { label: "Marked resistance", sub: "Heel very far from ear", score: 4 },
-    ]
-  },
-];
+  function ballardManeuverSvg(type){
+    // All-original simplified teaching diagrams (not copies of Ballard chart).
+    const stroke = "#111827";
+    const faint = "#e5e7eb";
+    const mid = "#9ca3af";
+    const accent = "#0ea5e9";
 
-const ballardPhysicalConfigBase = [
-  {
-    key: "skin",
-    name: "Skin",
-    options: [
-      { label: "Sticky, friable, transparent", sub: "", score: -1 },
-      { label: "Gelatinous, red, translucent", sub: "", score: 0 },
-      { label: "Smooth, pink; visible veins", sub: "", score: 1 },
-      { label: "Superficial peeling and/or rash; few veins", sub: "", score: 2 },
-      { label: "Cracking, pale areas; rare veins", sub: "", score: 3 },
-      { label: "Parchment; deep cracking; no vessels", sub: "", score: 4 },
-      { label: "Leathery, cracked, wrinkled", sub: "", score: 5 },
-    ]
-  },
-  {
-    key: "lanugo",
-    name: "Lanugo",
-    options: [
-      { label: "None", sub: "", score: 0 },
-      { label: "Sparse", sub: "", score: 1 },
-      { label: "Abundant", sub: "", score: 2 },
-      { label: "Thinning", sub: "", score: 3 },
-      { label: "Bald areas", sub: "", score: 4 },
-      { label: "Mostly bald", sub: "", score: 5 },
-    ]
-  },
-  {
-    key: "plantar",
-    name: "Plantar surface",
-    options: [
-      { label: "Heel-toe < 40 mm", sub: "", score: -2 },
-      { label: "Heel-toe 40–50 mm", sub: "", score: -1 },
-      { label: "> 50 mm, no crease", sub: "", score: 0 },
-      { label: "Faint red marks", sub: "", score: 1 },
-      { label: "Anterior transverse crease only", sub: "", score: 2 },
-      { label: "Creases anterior 2/3", sub: "", score: 3 },
-      { label: "Creases over entire sole", sub: "", score: 4 },
-    ]
-  },
-  {
-    key: "breast",
-    name: "Breast",
-    options: [
-      { label: "Imperceptible", sub: "", score: -1 },
-      { label: "Barely perceptible", sub: "", score: 0 },
-      { label: "Flat areola, no bud", sub: "", score: 1 },
-      { label: "Stippled areola, 1–2 mm bud", sub: "", score: 2 },
-      { label: "Raised areola, 3–4 mm bud", sub: "", score: 3 },
-      { label: "Full areola, 5–10 mm bud", sub: "", score: 4 },
-    ]
-  },
-  {
-    key: "eye_ear",
-    name: "Eye/Ear",
-    options: [
-      { label: "Lids fused tightly", sub: "", score: -2 },
-      { label: "Lids fused loosely", sub: "", score: -1 },
-      { label: "Lids open; pinna flat; stays folded", sub: "", score: 0 },
-      { label: "Slightly curved pinna; soft; slow recoil", sub: "", score: 1 },
-      { label: "Well curved pinna; soft but ready recoil", sub: "", score: 2 },
-      { label: "Formed and firm; instant recoil", sub: "", score: 3 },
-      { label: "Thick cartilage; ear stiff", sub: "", score: 4 },
-    ]
-  },
-];
+    const wrap = (inner) => `
+      <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ballard maneuver illustration">
+        <rect x="10" y="10" width="700" height="400" rx="24" fill="#ffffff" stroke="${faint}" stroke-width="3"/>
+        ${inner}
+      </svg>
+    `;
 
-const ballardGenitalsMale = {
-  name: "Genitals (male)",
-  options: [
-    { label: "Scrotum flat, smooth", sub: "", score: -1 },
-    { label: "Scrotum empty, faint rugae", sub: "", score: 0 },
-    { label: "Testes in upper canal, rare rugae", sub: "", score: 1 },
-    { label: "Testes descending, few rugae", sub: "", score: 2 },
-    { label: "Testes down, good rugae", sub: "", score: 3 },
-    { label: "Testes pendulous, deep rugae", sub: "", score: 4 },
-  ]
-};
+    if(type==="posture"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Posture (observe at rest)</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Look at resting flexion of arms/legs.</text>
 
-const ballardGenitalsFemale = {
-  name: "Genitals (female)",
-  options: [
-    { label: "Clitoris prominent, labia flat", sub: "", score: -1 },
-    { label: "Clitoris prominent, small labia minora", sub: "", score: 0 },
-    { label: "Clitoris prominent, enlarging minora", sub: "", score: 1 },
-    { label: "Majora and minora equally prominent", sub: "", score: 2 },
-    { label: "Majora large, minora small", sub: "", score: 3 },
-    { label: "Majora cover clitoris and minora", sub: "", score: 4 },
-  ]
-};
+        <ellipse cx="210" cy="230" rx="110" ry="135" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="210" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
 
-// Score→weeks mapping table (as shown on your chart)
-const ballardScoreToWeeks = [
-  { score: -10, weeks: 20 },
-  { score: -5,  weeks: 22 },
-  { score: 0,   weeks: 24 },
-  { score: 5,   weeks: 26 },
-  { score: 10,  weeks: 28 },
-  { score: 15,  weeks: 30 },
-  { score: 20,  weeks: 32 },
-  { score: 25,  weeks: 34 },
-  { score: 30,  weeks: 36 },
-  { score: 35,  weeks: 38 },
-  { score: 40,  weeks: 40 },
-  { score: 45,  weeks: 42 },
-  { score: 50,  weeks: 44 },
-];
+        <path d="M160 205 Q120 230 120 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M260 205 Q300 230 300 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
 
-function ballardWeeksFromScore(totalScore){
-  if(!Number.isFinite(totalScore)) return null;
-  const pts = ballardScoreToWeeks;
-  if(totalScore <= pts[0].score) return pts[0].weeks;
-  if(totalScore >= pts[pts.length-1].score) return pts[pts.length-1].weeks;
+        <path d="M170 300 Q160 340 200 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M250 300 Q260 340 220 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
 
-  for(let i=0;i<pts.length-1;i++){
-    const a = pts[i], b = pts[i+1];
-    if(totalScore >= a.score && totalScore <= b.score){
-      const t = (totalScore - a.score) / (b.score - a.score);
-      return a.weeks + t * (b.weeks - a.weeks);
+        <text x="410" y="200" font-size="18" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="700">Tip:</text>
+        <text x="410" y="230" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more flexion.</text>
+        <text x="410" y="255" font-size="16" font-family="system-ui, -apple-system" fill="#475467">Very preterm → more extension.</text>
+
+        <line x1="360" y1="215" x2="310" y2="215" stroke="${mid}" stroke-width="3"/>
+        <circle cx="310" cy="215" r="5" fill="${mid}"/>
+      `);
     }
+
+    if(type==="square_window"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Square window (wrist)</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex hand toward forearm and estimate the angle.</text>
+
+        <rect x="80" y="205" width="320" height="70" rx="35" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="410" cy="240" r="12" fill="${stroke}"/>
+
+        <path d="M410 240 L520 140" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
+        <path d="M410 240 L540 240" stroke="${accent}" stroke-width="10" stroke-linecap="round"/>
+        <path d="M410 240 L520 330" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
+
+        <path d="M450 240 A40 40 0 0 1 420 200" fill="none" stroke="${accent}" stroke-width="6"/>
+        <text x="455" y="205" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
+
+        <text x="80" y="330" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (toward 0°).</text>
+      `);
+    }
+
+    if(type==="arm_recoil"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Arm recoil</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Briefly extend the arm, release, then observe recoil.</text>
+
+        <ellipse cx="200" cy="250" rx="120" ry="130" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="200" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <line x1="270" y1="230" x2="410" y2="230" stroke="${mid}" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="270" cy="230" r="10" fill="${stroke}"/>
+
+        <path d="M270 230 Q340 190 340 150" stroke="${accent}" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+        <path d="M390 210 l20 20 l-20 20" fill="none" stroke="${mid}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="430" y="235" font-size="16" font-family="system-ui, -apple-system" fill="#475467">extend</text>
+
+        <path d="M330 170 l-20 -20 l20 -20" fill="none" stroke="${accent}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="360" y="170" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">recoil</text>
+
+        <text x="420" y="300" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → stronger recoil (more flexion).</text>
+      `);
+    }
+
+    if(type==="popliteal"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Popliteal angle</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex thigh to abdomen, then extend lower leg and estimate angle.</text>
+
+        <line x1="120" y1="260" x2="320" y2="260" stroke="${stroke}" stroke-width="14" stroke-linecap="round"/>
+        <circle cx="320" cy="260" r="12" fill="${stroke}"/>
+
+        <line x1="320" y1="260" x2="460" y2="150" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
+
+        <path d="M360 260 A60 60 0 0 0 332 212" fill="none" stroke="${accent}" stroke-width="8"/>
+        <text x="392" y="235" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
+
+        <line x1="120" y1="310" x2="600" y2="310" stroke="${faint}" stroke-width="6"/>
+        <text x="120" y="345" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (more resistance to extension).</text>
+      `);
+    }
+
+    if(type==="scarf"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Scarf sign</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Pull arm across chest like a scarf; note elbow position vs midline.</text>
+
+        <ellipse cx="230" cy="255" rx="130" ry="145" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="230" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <line x1="230" y1="125" x2="230" y2="380" stroke="${mid}" stroke-width="4" stroke-dasharray="8 10"/>
+        <text x="245" y="138" font-size="14" font-family="system-ui, -apple-system" fill="${mid}">midline</text>
+
+        <line x1="315" y1="240" x2="170" y2="280" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
+        <circle cx="170" cy="280" r="10" fill="${accent}"/>
+
+        <text x="410" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">elbow position</text>
+        <line x1="390" y1="255" x2="185" y2="285" stroke="${faint}" stroke-width="3"/>
+      `);
+    }
+
+    if(type==="heel_to_ear"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Heel-to-ear</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.</text>
+
+        <circle cx="170" cy="160" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="205" cy="160" r="10" fill="${stroke}"/>
+
+        <rect x="160" y="210" width="220" height="150" rx="70" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <path d="M360 340 Q300 270 250 220" stroke="${accent}" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <circle cx="250" cy="220" r="10" fill="${accent}"/>
+
+        <path d="M240 215 l-22 -12 l6 24 z" fill="${accent}"/>
+
+        <text x="430" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more resistance → heel stays farther away.</text>
+      `);
+    }
+
+    return wrap(`<text x="40" y="70" font-size="24" font-family="system-ui" fill="${stroke}">Maneuver</text>`);
   }
-  return null;
-}
 
-// Creates a tap-card item block and stores the chosen score in dataset + recalcs
-function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, iconType=null){
-  const block = document.createElement("div");
-  block.className = "itemblock";
-  block.dataset.groupId = groupId;
-  block.dataset.value = String(options[defaultIndex]?.score ?? 0);
+  const ballardNeuroConfig = [
+    {
+      key: "posture",
+      name: "Posture",
+      hint: "Observe resting tone/flexion at rest.",
+      options: [
+        { label: "Extremities extended", sub: "Very little flexion at rest", score: 0 },
+        { label: "Slight flexion", sub: "Some flexion of hips/knees/arms", score: 1 },
+        { label: "Moderate flexion", sub: "More flexion in limbs", score: 2 },
+        { label: "Good flexion", sub: "Limbs clearly flexed", score: 3 },
+        { label: "Tight flexion", sub: "Strongly flexed posture", score: 4 },
+      ]
+    },
+    {
+      key: "square_window",
+      name: "Square window (wrist)",
+      hint: "Flex hand toward forearm; estimate angle at wrist.",
+      options: [
+        { label: "> 90°", sub: "Very limited flexion", score: -1 },
+        { label: "90°", sub: "", score: 0 },
+        { label: "60°", sub: "", score: 1 },
+        { label: "45°", sub: "", score: 2 },
+        { label: "30°", sub: "", score: 3 },
+        { label: "0°", sub: "Hand flat on forearm", score: 4 },
+      ]
+    },
+    {
+      key: "arm_recoil",
+      name: "Arm recoil",
+      hint: "Briefly extend arm, then release and see recoil angle.",
+      options: [
+        { label: "No recoil", sub: "Remains at ~180°", score: 0 },
+        { label: "Recoil 140–180°", sub: "", score: 1 },
+        { label: "Recoil 110–140°", sub: "", score: 2 },
+        { label: "Recoil 90–110°", sub: "", score: 3 },
+        { label: "Recoil < 90°", sub: "Strong recoil", score: 4 },
+      ]
+    },
+    {
+      key: "popliteal",
+      name: "Popliteal angle",
+      hint: "Flex thigh to abdomen then extend lower leg; estimate angle.",
+      options: [
+        { label: "180°", sub: "", score: -1 },
+        { label: "160°", sub: "", score: 0 },
+        { label: "140°", sub: "", score: 1 },
+        { label: "120°", sub: "", score: 2 },
+        { label: "100°", sub: "", score: 3 },
+        { label: "90°", sub: "", score: 4 },
+        { label: "< 90°", sub: "Marked resistance", score: 5 },
+      ]
+    },
+    {
+      key: "scarf",
+      name: "Scarf sign",
+      hint: "Pull arm across chest like a scarf; note where the elbow lands.",
+      options: [
+        { label: "Elbow crosses midline easily", sub: "Very little resistance", score: 0 },
+        { label: "Elbow reaches midline", sub: "", score: 1 },
+        { label: "Elbow does not reach midline", sub: "", score: 2 },
+        { label: "Elbow well short of midline", sub: "Clear resistance", score: 3 },
+        { label: "Marked resistance", sub: "Elbow far from midline", score: 4 },
+      ]
+    },
+    {
+      key: "heel_to_ear",
+      name: "Heel to ear",
+      hint: "Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.",
+      options: [
+        { label: "Heel reaches ear", sub: "Little resistance", score: 0 },
+        { label: "Heel approaches ear", sub: "Minimal resistance", score: 1 },
+        { label: "Moderate resistance", sub: "Heel not close to ear", score: 2 },
+        { label: "Good resistance", sub: "Heel far from ear", score: 3 },
+        { label: "Marked resistance", sub: "Heel very far from ear", score: 4 },
+      ]
+    },
+  ];
 
-  const head = document.createElement("div");
-  head.className = "itemhead";
+  const ballardPhysicalConfigBase = [
+    {
+      key: "skin",
+      name: "Skin",
+      options: [
+        { label: "Sticky, friable, transparent", sub: "", score: -1 },
+        { label: "Gelatinous, red, translucent", sub: "", score: 0 },
+        { label: "Smooth, pink; visible veins", sub: "", score: 1 },
+        { label: "Superficial peeling and/or rash; few veins", sub: "", score: 2 },
+        { label: "Cracking, pale areas; rare veins", sub: "", score: 3 },
+        { label: "Parchment; deep cracking; no vessels", sub: "", score: 4 },
+        { label: "Leathery, cracked, wrinkled", sub: "", score: 5 },
+      ]
+    },
+    {
+      key: "lanugo",
+      name: "Lanugo",
+      options: [
+        { label: "None", sub: "", score: 0 },
+        { label: "Sparse", sub: "", score: 1 },
+        { label: "Abundant", sub: "", score: 2 },
+        { label: "Thinning", sub: "", score: 3 },
+        { label: "Bald areas", sub: "", score: 4 },
+        { label: "Mostly bald", sub: "", score: 5 },
+      ]
+    },
+    {
+      key: "plantar",
+      name: "Plantar surface",
+      options: [
+        { label: "Heel-toe < 40 mm", sub: "", score: -2 },
+        { label: "Heel-toe 40–50 mm", sub: "", score: -1 },
+        { label: "> 50 mm, no crease", sub: "", score: 0 },
+        { label: "Faint red marks", sub: "", score: 1 },
+        { label: "Anterior transverse crease only", sub: "", score: 2 },
+        { label: "Creases anterior 2/3", sub: "", score: 3 },
+        { label: "Creases over entire sole", sub: "", score: 4 },
+      ]
+    },
+    {
+      key: "breast",
+      name: "Breast",
+      options: [
+        { label: "Imperceptible", sub: "", score: -1 },
+        { label: "Barely perceptible", sub: "", score: 0 },
+        { label: "Flat areola, no bud", sub: "", score: 1 },
+        { label: "Stippled areola, 1–2 mm bud", sub: "", score: 2 },
+        { label: "Raised areola, 3–4 mm bud", sub: "", score: 3 },
+        { label: "Full areola, 5–10 mm bud", sub: "", score: 4 },
+      ]
+    },
+    {
+      key: "eye_ear",
+      name: "Eye/Ear",
+      options: [
+        { label: "Lids fused tightly", sub: "", score: -2 },
+        { label: "Lids fused loosely", sub: "", score: -1 },
+        { label: "Lids open; pinna flat; stays folded", sub: "", score: 0 },
+        { label: "Slightly curved pinna; soft; slow recoil", sub: "", score: 1 },
+        { label: "Well curved pinna; soft but ready recoil", sub: "", score: 2 },
+        { label: "Formed and firm; instant recoil", sub: "", score: 3 },
+        { label: "Thick cartilage; ear stiff", sub: "", score: 4 },
+      ]
+    },
+  ];
 
-  const h4 = document.createElement("div");
-  h4.innerHTML = `<h4>${title}</h4>${hint ? `<div class="smallhint">${hint}</div>` : ""}`;
+  const ballardGenitalsMale = {
+    name: "Genitals (male)",
+    options: [
+      { label: "Scrotum flat, smooth", sub: "", score: -1 },
+      { label: "Scrotum empty, faint rugae", sub: "", score: 0 },
+      { label: "Testes in upper canal, rare rugae", sub: "", score: 1 },
+      { label: "Testes descending, few rugae", sub: "", score: 2 },
+      { label: "Testes down, good rugae", sub: "", score: 3 },
+      { label: "Testes pendulous, deep rugae", sub: "", score: 4 },
+    ]
+  };
 
-  head.appendChild(h4);
-  block.appendChild(head);
+  const ballardGenitalsFemale = {
+    name: "Genitals (female)",
+    options: [
+      { label: "Clitoris prominent, labia flat", sub: "", score: -1 },
+      { label: "Clitoris prominent, small labia minora", sub: "", score: 0 },
+      { label: "Clitoris prominent, enlarging minora", sub: "", score: 1 },
+      { label: "Majora and minora equally prominent", sub: "", score: 2 },
+      { label: "Majora large, minora small", sub: "", score: 3 },
+      { label: "Majora cover clitoris and minora", sub: "", score: 4 },
+    ]
+  };
 
-  const cards = document.createElement("div");
-  cards.className = "cards";
+  const ballardScoreToWeeks = [
+    { score: -10, weeks: 20 },
+    { score: -5,  weeks: 22 },
+    { score: 0,   weeks: 24 },
+    { score: 5,   weeks: 26 },
+    { score: 10,  weeks: 28 },
+    { score: 15,  weeks: 30 },
+    { score: 20,  weeks: 32 },
+    { score: 25,  weeks: 34 },
+    { score: 30,  weeks: 36 },
+    { score: 35,  weeks: 38 },
+    { score: 40,  weeks: 40 },
+    { score: 45,  weeks: 42 },
+    { score: 50,  weeks: 44 },
+  ];
 
-  options.forEach((opt, idx) => {
-    const c = document.createElement("div");
-    c.className = "cardopt" + (idx===defaultIndex ? " active" : "");
-    c.setAttribute("role","button");
-    c.setAttribute("tabindex","0");
-    c.dataset.score = String(opt.score);
+  function ballardWeeksFromScore(totalScore){
+    if(!Number.isFinite(totalScore)) return null;
+    const pts = ballardScoreToWeeks;
+    if(totalScore <= pts[0].score) return pts[0].weeks;
+    if(totalScore >= pts[pts.length-1].score) return pts[pts.length-1].weeks;
 
-    const iconHtml = iconType ? `<div class="thumbsvg">${ballardIconSvg(iconType, opt.score)}</div>` : "";
+    for(let i=0;i<pts.length-1;i++){
+      const a = pts[i], b = pts[i+1];
+      if(totalScore >= a.score && totalScore <= b.score){
+        const t = (totalScore - a.score) / (b.score - a.score);
+        return a.weeks + t * (b.weeks - a.weeks);
+      }
+    }
+    return null;
+  }
 
-    c.innerHTML = `
-      <div class="top">
-        <div class="leftside">
-          ${iconHtml}
+  // Creates a tap-card item block and stores the chosen score in dataset + recalcs
+  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, showManeuver=false, maneuverType=null){
+    const block = document.createElement("div");
+    block.className = "itemblock";
+    block.dataset.groupId = groupId;
+    block.dataset.value = String(options[defaultIndex]?.score ?? 0);
+
+    const head = document.createElement("div");
+    head.className = "itemhead";
+
+    const h4 = document.createElement("div");
+    h4.innerHTML = `<h4>${title}</h4>${hint ? `<div class="smallhint">${hint}</div>` : ""}`;
+
+    head.appendChild(h4);
+    block.appendChild(head);
+
+    if(showManeuver && maneuverType){
+      const m = document.createElement("div");
+      m.className = "maneuverBox";
+      m.innerHTML = `
+        <div class="cap">How to do it (quick visual)</div>
+        ${ballardManeuverSvg(maneuverType)}
+      `;
+      block.appendChild(m);
+    }
+
+    const cards = document.createElement("div");
+    cards.className = "cards";
+
+    options.forEach((opt, idx) => {
+      const c = document.createElement("div");
+      c.className = "cardopt" + (idx===defaultIndex ? " active" : "");
+      c.setAttribute("role","button");
+      c.setAttribute("tabindex","0");
+      c.dataset.score = String(opt.score);
+
+      c.innerHTML = `
+        <div class="top">
           <div>
             <div class="label">${opt.label}</div>
             ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
           </div>
+          <div class="score">${opt.score}</div>
         </div>
-        <div class="score">${opt.score}</div>
-      </div>
-    `;
+      `;
 
-    function activate(){
-      [...cards.querySelectorAll(".cardopt")].forEach(x => x.classList.remove("active"));
-      c.classList.add("active");
-      block.dataset.value = String(opt.score);
-      calcBallard();
-    }
-    c.addEventListener("click", activate);
-    c.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); activate(); } });
+      function activate(){
+        [...cards.querySelectorAll(".cardopt")].forEach(x => x.classList.remove("active"));
+        c.classList.add("active");
+        block.dataset.value = String(opt.score);
+        calcBallard();
+      }
+      c.addEventListener("click", activate);
+      c.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); activate(); } });
 
-    cards.appendChild(c);
-  });
-
-  block.appendChild(cards);
-  host.appendChild(block);
-}
-
-function getGroupValue(groupId){
-  const block = document.querySelector(`.itemblock[data-group-id="${groupId}"]`);
-  if(!block) return 0;
-  const v = Number(block.dataset.value ?? 0);
-  return Number.isFinite(v) ? v : 0;
-}
-
-function renderBallard(){
-  const neuroHost = el("ballard-neuro");
-  const physHost  = el("ballard-phys");
-  if(!neuroHost || !physHost) return;
-
-  neuroHost.innerHTML = "";
-  physHost.innerHTML = "";
-
-  ballardNeuroConfig.forEach(item => {
-   renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, item.key);
-  });
-
-  ballardPhysicalConfigBase.forEach(item => {
-    renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0);
-  });
-
-  // Sex-specific genitals (re-rendered on sex change)
-  const sex = el("ballardSex")?.value ?? "male";
-  const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
-  renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0);
-
-  calcBallard();
-}
-
-function calcBallard(){
-  let neuro = 0, phys = 0;
-
-  ballardNeuroConfig.forEach(item => {
-    neuro += getGroupValue(`bn_${item.key}`);
-  });
-
-  ballardPhysicalConfigBase.forEach(item => {
-    phys += getGroupValue(`bp_${item.key}`);
-  });
-
-  phys += getGroupValue("bp_genitals");
-
-  const total = neuro + phys;
-  const gaWeeks = ballardWeeksFromScore(total);
-
-  const ageDays = numOrNull(el("ballardAgeDays")?.value);
-  const cgaWeeks = (gaWeeks != null && ageDays != null) ? (gaWeeks + ageDays/7) : null;
-
-  el("ballardNeuroOut").textContent = String(neuro);
-  el("ballardPhysOut").textContent = String(phys);
-  el("ballardTotalOut").textContent = String(total);
-  el("ballardGaOut").textContent = gaWeeks==null ? "—" : `${gaWeeks.toFixed(1)} weeks`;
-  el("ballardCgaOut").textContent = cgaWeeks==null ? "—" : `${cgaWeeks.toFixed(1)} weeks`;
-}
-
-// hooks
-el("ballardSex")?.addEventListener("change", renderBallard);
-el("ballardAgeDays")?.addEventListener("input", calcBallard);
-
-function ballardIconSvg(type, score){
-  // Clamp scores into a small 0..1 intensity used for pose/angle
-  const norm = (v, min, max) => {
-    const x = (v - min) / (max - min);
-    return Math.max(0, Math.min(1, x));
-  };
-
-  // common styles
-  const stroke = "#1f2937";
-  const thin = 2.2;
-  const thick = 3.0;
-
-  // Helpers to draw a joint with two segments
-  const joint = (x, y, len1, a1, len2, a2, sw=thick) => {
-    const rad = d => d * Math.PI/180;
-    const x1 = x + len1*Math.cos(rad(a1));
-    const y1 = y + len1*Math.sin(rad(a1));
-    const x2 = x1 + len2*Math.cos(rad(a2));
-    const y2 = y1 + len2*Math.sin(rad(a2));
-    return `
-      <circle cx="${x}" cy="${y}" r="2.4" fill="${stroke}"/>
-      <line x1="${x}" y1="${y}" x2="${x1}" y2="${y1}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
-      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
-    `;
-  };
-
-  // background grid-like faint guide
-  const bg = `
-    <rect x="1" y="1" width="70" height="42" rx="10" fill="#ffffff"/>
-    <line x1="10" y1="34" x2="62" y2="34" stroke="#e5e7eb" stroke-width="2"/>
-  `;
-
-  if(type === "square_window"){
-    // Score -1..4 : wrist angle decreases with maturity
-    const t = norm(score, -1, 4);
-    const angle = 95 - t*95; // ~95° down to ~0°
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- forearm -->
-        <line x1="10" y1="26" x2="46" y2="26" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <!-- wrist + hand -->
-        ${joint(46,26, 0,0, 16, -angle, thick)}
-        <circle cx="46" cy="26" r="3.2" fill="${stroke}"/>
-      </svg>
-    `;
-  }
-
-  if(type === "arm_recoil"){
-    // Score 0..4 : recoil gets stronger (more flexion)
-    const t = norm(score, 0, 4);
-    const elbow = 18 + t*18;  // elbow flex amount
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- body -->
-        <line x1="14" y1="30" x2="30" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <!-- arm -->
-        ${joint(30,22, 16, 0, 16, 180-elbow, thick)}
-      </svg>
-    `;
-  }
-
-  if(type === "popliteal"){
-    // Score -1..5 : popliteal angle decreases with maturity (more flexion)
-    const t = norm(score, -1, 5);
-    const ang = 175 - t*105; // ~175° down to ~70°
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- thigh -->
-        <line x1="18" y1="18" x2="38" y2="18" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <!-- leg -->
-        ${joint(38,18, 0,0, 18, ang, thick)}
-        <circle cx="38" cy="18" r="3.2" fill="${stroke}"/>
-      </svg>
-    `;
-  }
-
-  if(type === "scarf"){
-    // Score 0..4 : elbow position moves away from midline as maturity increases
-    const t = norm(score, 0, 4);
-    const elbowX = 46 - t*18; // crosses midline early → closer to shoulder later
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- torso + midline -->
-        <line x1="36" y1="10" x2="36" y2="34" stroke="#e5e7eb" stroke-width="2"/>
-        <circle cx="28" cy="18" r="7" fill="#f3f4f6" stroke="#e5e7eb"/>
-        <!-- arm across chest -->
-        <line x1="28" y1="18" x2="${elbowX}" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <circle cx="${elbowX}" cy="22" r="3.0" fill="${stroke}"/>
-      </svg>
-    `;
-  }
-
-  if(type === "heel_to_ear"){
-    // Score 0..4 : heel reaches ear early; later stays far
-    const t = norm(score, 0, 4);
-    const heelY = 14 + t*16;  // higher (closer to ear) at low score; lower (far) at high score
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- head/ear -->
-        <circle cx="20" cy="14" r="6" fill="#f3f4f6" stroke="#e5e7eb"/>
-        <circle cx="25" cy="14" r="2.4" fill="${stroke}"/>
-        <!-- leg -->
-        <line x1="46" y1="34" x2="34" y2="${heelY}" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <circle cx="34" cy="${heelY}" r="3.0" fill="${stroke}"/>
-      </svg>
-    `;
-  }
-
-  if(type === "posture"){
-    // Score 0..4 : more flexion with maturity
-    const t = norm(score, 0, 4);
-    const armA = -10 - t*40;
-    const legA = 40 + t*30;
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <!-- trunk -->
-        <line x1="34" y1="16" x2="34" y2="30" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-        <!-- head -->
-        <circle cx="34" cy="12" r="5.2" fill="#f3f4f6" stroke="#e5e7eb"/>
-        <!-- arms and legs as two joints -->
-        ${joint(34,18, 12, armA, 10, armA-20, thick)}
-        ${joint(34,30, 12, legA, 10, legA+15, thick)}
-      </svg>
-    `;
-  }
-
-  // fallback
-  return `
-    <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-      ${bg}
-      <text x="12" y="26" font-size="12" fill="#667085">N/A</text>
-    </svg>
-  `;
-}
-
-renderBallard();
-
- // ===================== THOMPSON SCORE =====================
-// Options are shown as "Description - score" but the stored value is the numeric score.
-// Edit labels if your local Thompson descriptors differ.
-
-const thompsonConfig = [
-  {
-    key: "tone",
-    name: "Tone",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Hypertonia", score: 1 },
-      { label: "Hypotonia", score: 2 },
-      { label: "Flaccid", score: 3 },
-    ],
-  },
-  {
-    key: "loc",
-    name: "Level of consciousness",
-    options: [
-      { label: "Normal / alert", score: 0 },
-      { label: "Hyperalert / irritable", score: 1 },
-      { label: "Lethargic", score: 2 },
-      { label: "Coma", score: 3 },
-    ],
-  },
-  {
-    key: "seiz",
-    name: "Seizures",
-    options: [
-      { label: "None", score: 0 },
-      { label: "Occasional", score: 1 },
-      { label: "Frequent", score: 2 },
-      { label: "Status epilepticus", score: 3 },
-    ],
-  },
-  {
-    key: "post",
-    name: "Posture",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Mild distal flexion", score: 1 },
-      { label: "Strong distal flexion / decorticate", score: 2 },
-      { label: "Decerebrate posture", score: 3 },
-    ],
-  },
-  {
-    key: "moro",
-    name: "Moro reflex",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Partial", score: 1 },
-      { label: "Weak", score: 2 },
-      { label: "Absent", score: 3 },
-    ],
-  },
-  {
-    key: "grasp",
-    name: "Grasp",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Poor", score: 1 },
-      { label: "Very weak", score: 2 },
-      { label: "Absent", score: 3 },
-    ],
-  },
-  {
-    key: "suck",
-    name: "Suck",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Poor", score: 1 },
-      { label: "Very weak", score: 2 },
-      { label: "Absent", score: 3 },
-    ],
-  },
-  {
-    key: "resp",
-    name: "Respiration",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Hyperventilation", score: 1 },
-      { label: "Periodic / irregular", score: 2 },
-      { label: "Apnoea / ventilated", score: 3 },
-    ],
-  },
-  {
-    key: "font",
-    name: "Fontanelle",
-    options: [
-      { label: "Normal", score: 0 },
-      { label: "Full", score: 1 },
-      { label: "Tense", score: 2 },
-      { label: "Bulging", score: 3 },
-    ],
-  },
-];
-
-function renderThompson(){
-  const host = el("thompson-items");
-  if(!host) return;
-  host.innerHTML = "";
-
-  thompsonConfig.forEach(item => {
-    const row = document.createElement("div");
-    row.className = "row";
-
-    const lab = document.createElement("label");
-    const left = document.createElement("span");
-    left.textContent = item.name;
-    const help = document.createElement("span");
-    help.className = "helpbtn";
-    help.textContent = "?";
-    lab.appendChild(left);
-    lab.appendChild(help);
-
-    const helpBox = document.createElement("div");
-    helpBox.className = "helpbox";
-    helpBox.style.display = "none";
-    helpBox.textContent = `Pick the descriptor that best matches: "${item.name}".`;
-
-    const sel = document.createElement("select");
-    sel.id = `t_${item.key}`;
-
-    item.options.forEach(opt => {
-      const o = document.createElement("option");
-      o.value = String(opt.score);
-      o.textContent = `${opt.label} - ${opt.score}`;
-      sel.appendChild(o);
+      cards.appendChild(c);
     });
 
-    sel.addEventListener("change", calcThompson);
-    help.addEventListener("click", ()=> {
-      helpBox.style.display = (helpBox.style.display==="none" || helpBox.style.display==="") ? "block" : "none";
+    block.appendChild(cards);
+    host.appendChild(block);
+  }
+
+  function getGroupValue(groupId){
+    const block = document.querySelector(`.itemblock[data-group-id="${groupId}"]`);
+    if(!block) return 0;
+    const v = Number(block.dataset.value ?? 0);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  function renderBallard(){
+    const neuroHost = el("ballard-neuro");
+    const physHost  = el("ballard-phys");
+    if(!neuroHost || !physHost) return;
+
+    neuroHost.innerHTML = "";
+    physHost.innerHTML = "";
+
+    // Neuromuscular: show maneuver image above the choices
+    ballardNeuroConfig.forEach(item => {
+      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, true, item.key);
     });
 
-    row.appendChild(lab);
-    row.appendChild(sel);
-    row.appendChild(helpBox);
-    host.appendChild(row);
-  });
+    // Physical: no maneuver image (text-only)
+    ballardPhysicalConfigBase.forEach(item => {
+      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0, false, null);
+    });
 
-  calcThompson();
-}
+    // Sex-specific genitals
+    const sex = el("ballardSex")?.value ?? "male";
+    const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
+    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0, false, null);
 
-function calcThompson(){
-  let total = 0;
-  thompsonConfig.forEach(item => {
-    total += Number(el(`t_${item.key}`)?.value ?? 0);
-  });
+    calcBallard();
+  }
 
-  el("thompsonTotalOut").textContent = String(total);
+  function calcBallard(){
+    let neuro = 0, phys = 0;
 
-  let sev = "—";
-  if(total <= 10) sev = "Mild";
-  else if(total <= 14) sev = "Moderate";
-  else sev = "Severe";
-  el("thompsonSeverityOut").textContent = sev;
-}
+    ballardNeuroConfig.forEach(item => {
+      neuro += getGroupValue(`bn_${item.key}`);
+    });
 
-renderThompson();
+    ballardPhysicalConfigBase.forEach(item => {
+      phys += getGroupValue(`bp_${item.key}`);
+    });
+
+    phys += getGroupValue("bp_genitals");
+
+    const total = neuro + phys;
+    const gaWeeks = ballardWeeksFromScore(total);
+
+    const ageDays = numOrNull(el("ballardAgeDays")?.value);
+    const cgaWeeks = (gaWeeks != null && ageDays != null) ? (gaWeeks + ageDays/7) : null;
+
+    el("ballardNeuroOut").textContent = String(neuro);
+    el("ballardPhysOut").textContent = String(phys);
+    el("ballardTotalOut").textContent = String(total);
+    el("ballardGaOut").textContent = gaWeeks==null ? "—" : `${gaWeeks.toFixed(1)} weeks`;
+    el("ballardCgaOut").textContent = cgaWeeks==null ? "—" : `${cgaWeeks.toFixed(1)} weeks`;
+  }
+
+  el("ballardSex")?.addEventListener("change", renderBallard);
+  el("ballardAgeDays")?.addEventListener("input", calcBallard);
+
+  renderBallard();
+
+  // ===================== THOMPSON SCORE =====================
+  const thompsonConfig = [
+    { key: "tone", name: "Tone", options: [
+      { label: "Normal", score: 0 }, { label: "Hypertonia", score: 1 }, { label: "Hypotonia", score: 2 }, { label: "Flaccid", score: 3 },
+    ]},
+    { key: "loc", name: "Level of consciousness", options: [
+      { label: "Normal / alert", score: 0 }, { label: "Hyperalert / irritable", score: 1 }, { label: "Lethargic", score: 2 }, { label: "Coma", score: 3 },
+    ]},
+    { key: "seiz", name: "Seizures", options: [
+      { label: "None", score: 0 }, { label: "Occasional", score: 1 }, { label: "Frequent", score: 2 }, { label: "Status epilepticus", score: 3 },
+    ]},
+    { key: "post", name: "Posture", options: [
+      { label: "Normal", score: 0 }, { label: "Mild distal flexion", score: 1 }, { label: "Strong distal flexion / decorticate", score: 2 }, { label: "Decerebrate posture", score: 3 },
+    ]},
+    { key: "moro", name: "Moro reflex", options: [
+      { label: "Normal", score: 0 }, { label: "Partial", score: 1 }, { label: "Weak", score: 2 }, { label: "Absent", score: 3 },
+    ]},
+    { key: "grasp", name: "Grasp", options: [
+      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
+    ]},
+    { key: "suck", name: "Suck", options: [
+      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
+    ]},
+    { key: "resp", name: "Respiration", options: [
+      { label: "Normal", score: 0 }, { label: "Hyperventilation", score: 1 }, { label: "Periodic / irregular", score: 2 }, { label: "Apnoea / ventilated", score: 3 },
+    ]},
+    { key: "font", name: "Fontanelle", options: [
+      { label: "Normal", score: 0 }, { label: "Full", score: 1 }, { label: "Tense", score: 2 }, { label: "Bulging", score: 3 },
+    ]},
+  ];
+
+  function renderThompson(){
+    const host = el("thompson-items");
+    if(!host) return;
+    host.innerHTML = "";
+
+    thompsonConfig.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const lab = document.createElement("label");
+      const left = document.createElement("span");
+      left.textContent = item.name;
+      const help = document.createElement("span");
+      help.className = "helpbtn";
+      help.textContent = "?";
+      lab.appendChild(left);
+      lab.appendChild(help);
+
+      const helpBox = document.createElement("div");
+      helpBox.className = "helpbox";
+      helpBox.style.display = "none";
+      helpBox.textContent = `Pick the descriptor that best matches: "${item.name}".`;
+
+      const sel = document.createElement("select");
+      sel.id = `t_${item.key}`;
+
+      item.options.forEach(opt => {
+        const o = document.createElement("option");
+        o.value = String(opt.score);
+        o.textContent = `${opt.label} - ${opt.score}`;
+        sel.appendChild(o);
+      });
+
+      sel.addEventListener("change", calcThompson);
+      help.addEventListener("click", ()=> {
+        helpBox.style.display = (helpBox.style.display==="none" || helpBox.style.display==="") ? "block" : "none";
+      });
+
+      row.appendChild(lab);
+      row.appendChild(sel);
+      row.appendChild(helpBox);
+      host.appendChild(row);
+    });
+
+    calcThompson();
+  }
+
+  function calcThompson(){
+    let total = 0;
+    thompsonConfig.forEach(item => {
+      total += Number(el(`t_${item.key}`)?.value ?? 0);
+    });
+
+    el("thompsonTotalOut").textContent = String(total);
+
+    let sev = "—";
+    if(total <= 10) sev = "Mild";
+    else if(total <= 14) sev = "Moderate";
+    else sev = "Severe";
+    el("thompsonSeverityOut").textContent = sev;
+  }
+
+  renderThompson();
 
   // ===================== JAUNDICE (PHOTO/EXCHANGE) =====================
-  // NOTE: These points are approximate interpolations from chart lines; validate with your local printed charts.
   const photoLines = {
     g38:   [[6,80],[12,120],[24,170],[36,210],[48,240],[60,265],[72,285],[84,300],[96,310],[108,315],[120,320]],
     g35:   [[6,80],[12,110],[24,160],[36,200],[48,225],[60,245],[72,265],[84,275],[96,285],[108,290],[120,292]],
