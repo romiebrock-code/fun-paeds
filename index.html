@@ -71,6 +71,33 @@
     .inline { display:flex; gap:10px; align-items:center; }
     .inline > * { flex:1; }
     .inline .tight { flex:0 0 150px; }
+
+/* --- Ballard tap-cards --- */
+.cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (max-width: 760px){ .cards { grid-template-columns: 1fr; } }
+
+.cardopt{
+  border: 1px solid #d0d5dd;
+  border-radius: 14px;
+  padding: 12px;
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+.cardopt .top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+.cardopt .label { font-weight: 650; color:#101828; line-height:1.2; }
+.cardopt .score { font-weight: 900; color:#0ea5e9; white-space:nowrap; }
+.cardopt .sub { margin-top: 6px; color:#475467; font-size: 13px; line-height:1.35; }
+
+.cardopt.active{
+  border-color:#0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14,165,233,.15);
+}
+
+.itemblock { border: 1px solid #eaecf0; border-radius: 16px; padding: 12px; }
+.itemhead { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 10px; }
+.itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
+.smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
   </style>
 </head>
 
@@ -194,53 +221,62 @@
       </div>
     </section>
 
-    <!-- ===================== BALLARD ===================== -->
-    <section id="sec-ballard" style="display:none">
-      <div class="card">
-        <div class="row">
-          <label>
-            Ballard score entry
-            <span class="inline" style="gap:6px; justify-content:flex-end;">
-              <span class="helpbtn" id="helpBallardBtn">?</span>
-            </span>
-          </label>
-          <div class="helpbox" id="helpBallardBox">
-            Select the score for each Ballard item using your Ballard reference sheet (score meanings depend on the chart images).<br/>
-            This calculator totals the score and converts to an approximate GA using the standard linear mapping used in Ballard tables.
-          </div>
-        </div>
+ <!-- ===================== BALLARD ===================== -->
+<section id="sec-ballard" style="display:none">
+  <div class="card">
+    <div class="row">
+      <label>
+        Ballard (stand-alone)
+        <span class="inline" style="gap:6px; justify-content:flex-end;">
+          <span class="helpbtn" id="helpBallardBtn">?</span>
+        </span>
+      </label>
+      <div class="helpbox" id="helpBallardBox">
+        Tap the option that best matches what you see/examine. Each option includes the score.
+        The calculator totals the score and estimates GA. If you enter postnatal age, it also shows corrected GA.
+      </div>
+    </div>
 
-        <div class="row">
-          <label>Sex for genital scoring</label>
-          <select id="ballardSex">
-            <option value="male" selected>Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="two">
-          <div class="card" style="margin:0">
-            <h3 style="margin:0 0 10px">Neuromuscular</h3>
-            <div class="grid" id="ballard-neuro"></div>
-          </div>
-          <div class="card" style="margin:0">
-            <h3 style="margin:0 0 10px">Physical</h3>
-            <div class="grid" id="ballard-phys"></div>
-          </div>
-        </div>
+    <div class="two">
+      <div class="row">
+        <label>Sex (for genital scoring)</label>
+        <select id="ballardSex">
+          <option value="male" selected>Male</option>
+          <option value="female">Female</option>
+        </select>
       </div>
 
-      <div class="card results">
-        <h3>Results</h3>
-        <div class="rrow"><span>Neuro subtotal</span><span id="ballardNeuroOut" class="bold">—</span></div>
-        <div class="rrow"><span>Physical subtotal</span><span id="ballardPhysOut" class="bold">—</span></div>
-        <div class="rrow"><span>Total score</span><span id="ballardTotalOut" class="bold">—</span></div>
-        <div class="rrow"><span>Estimated GA</span><span id="ballardGaOut" class="bold">—</span></div>
-        <div class="foot">Tip: GA estimate is approximate; use best obstetric dating when available.</div>
+      <div class="row">
+        <label>Age since birth <span class="unit">days (optional)</span></label>
+        <input id="ballardAgeDays" inputmode="decimal" placeholder="e.g. 10" />
       </div>
-    </section>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="two">
+      <div class="card" style="margin:0">
+        <h3 style="margin:0 0 10px">Neuromuscular</h3>
+        <div class="grid" id="ballard-neuro"></div>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3 style="margin:0 0 10px">Physical</h3>
+        <div class="grid" id="ballard-phys"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card results">
+    <h3>Results</h3>
+    <div class="rrow"><span>Neuro subtotal</span><span id="ballardNeuroOut" class="bold">—</span></div>
+    <div class="rrow"><span>Physical subtotal</span><span id="ballardPhysOut" class="bold">—</span></div>
+    <div class="rrow"><span>Total score</span><span id="ballardTotalOut" class="bold">—</span></div>
+    <div class="rrow"><span>Estimated GA</span><span id="ballardGaOut" class="bold">—</span></div>
+    <div class="rrow"><span>Corrected GA</span><span id="ballardCgaOut" class="bold">—</span></div>
+    <div class="foot">Use best obstetric dating when available. Ballard is an estimate.</div>
+  </div>
+</section>
 
   <!-- ===================== THOMPSON ===================== -->
 <section id="sec-thompson" style="display:none">
@@ -530,157 +566,324 @@
   }
   calcFluids();
 
-  // ===================== BALLARD SCORE =====================
-  // Note: For score meanings/descriptors, use your Ballard reference sheet.
-  const ballardNeuroItems = ["Posture","Square window","Arm recoil","Popliteal angle","Scarf sign","Heel to ear"];
-  const ballardPhysBase   = ["Skin","Lanugo","Plantar surface","Breast","Eye/Ear"];
-  const ballardGenMale    = "Genitals (Male)";
-  const ballardGenFemale  = "Genitals (Female)";
+// ===================== BALLARD (TAP-CARDS, STAND-ALONE) =====================
+// Based on your attached chart (descriptors + scores). Some neuromuscular items are pictorial;
+// labels below follow the standard interpretation of those drawings.
 
-  function makeScoreSelect(id, min, max, step=1){
-    const s = document.createElement("select");
-    s.id = id;
-    for(let v=min; v<=max; v+=step){
-      const opt = document.createElement("option");
-      opt.value = String(v);
-      opt.textContent = String(v);
-      s.appendChild(opt);
+const ballardNeuroConfig = [
+  {
+    key: "posture",
+    name: "Posture",
+    hint: "Observe resting tone/flexion at rest.",
+    options: [
+      { label: "Extremities extended", sub: "Very little flexion at rest", score: 0 },
+      { label: "Slight flexion", sub: "Some flexion of hips/knees/arms", score: 1 },
+      { label: "Moderate flexion", sub: "More flexion in limbs", score: 2 },
+      { label: "Good flexion", sub: "Limbs clearly flexed", score: 3 },
+      { label: "Tight flexion", sub: "Strongly flexed posture", score: 4 },
+    ]
+  },
+  {
+    key: "square_window",
+    name: "Square window (wrist)",
+    hint: "Flex hand toward forearm; estimate angle at wrist.",
+    options: [
+      { label: "> 90°", sub: "Very limited flexion", score: -1 },
+      { label: "90°", sub: "", score: 0 },
+      { label: "60°", sub: "", score: 1 },
+      { label: "45°", sub: "", score: 2 },
+      { label: "30°", sub: "", score: 3 },
+      { label: "0°", sub: "Hand flat on forearm", score: 4 },
+    ]
+  },
+  {
+    key: "arm_recoil",
+    name: "Arm recoil",
+    hint: "Briefly extend arm, then release and see recoil angle.",
+    options: [
+      { label: "No recoil", sub: "Remains at ~180°", score: 0 },
+      { label: "Recoil 140–180°", sub: "", score: 1 },
+      { label: "Recoil 110–140°", sub: "", score: 2 },
+      { label: "Recoil 90–110°", sub: "", score: 3 },
+      { label: "Recoil < 90°", sub: "Strong recoil", score: 4 },
+    ]
+  },
+  {
+    key: "popliteal",
+    name: "Popliteal angle",
+    hint: "Flex thigh to abdomen then extend lower leg; estimate angle.",
+    options: [
+      { label: "180°", sub: "", score: -1 },
+      { label: "160°", sub: "", score: 0 },
+      { label: "140°", sub: "", score: 1 },
+      { label: "120°", sub: "", score: 2 },
+      { label: "100°", sub: "", score: 3 },
+      { label: "90°", sub: "", score: 4 },
+      { label: "< 90°", sub: "Marked resistance", score: 5 },
+    ]
+  },
+  {
+    key: "scarf",
+    name: "Scarf sign",
+    hint: "Pull arm across chest like a scarf; note where the elbow lands.",
+    options: [
+      { label: "Elbow crosses midline easily", sub: "Very little resistance", score: 0 },
+      { label: "Elbow reaches midline", sub: "", score: 1 },
+      { label: "Elbow does not reach midline", sub: "", score: 2 },
+      { label: "Elbow well short of midline", sub: "Clear resistance", score: 3 },
+      { label: "Marked resistance", sub: "Elbow far from midline", score: 4 },
+    ]
+  },
+  {
+    key: "heel_to_ear",
+    name: "Heel to ear",
+    hint: "Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.",
+    options: [
+      { label: "Heel reaches ear", sub: "Little resistance", score: 0 },
+      { label: "Heel approaches ear", sub: "Minimal resistance", score: 1 },
+      { label: "Moderate resistance", sub: "Heel not close to ear", score: 2 },
+      { label: "Good resistance", sub: "Heel far from ear", score: 3 },
+      { label: "Marked resistance", sub: "Heel very far from ear", score: 4 },
+    ]
+  },
+];
+
+const ballardPhysicalConfigBase = [
+  {
+    key: "skin",
+    name: "Skin",
+    options: [
+      { label: "Sticky, friable, transparent", sub: "", score: -1 },
+      { label: "Gelatinous, red, translucent", sub: "", score: 0 },
+      { label: "Smooth, pink; visible veins", sub: "", score: 1 },
+      { label: "Superficial peeling and/or rash; few veins", sub: "", score: 2 },
+      { label: "Cracking, pale areas; rare veins", sub: "", score: 3 },
+      { label: "Parchment; deep cracking; no vessels", sub: "", score: 4 },
+      { label: "Leathery, cracked, wrinkled", sub: "", score: 5 },
+    ]
+  },
+  {
+    key: "lanugo",
+    name: "Lanugo",
+    options: [
+      { label: "None", sub: "", score: 0 },
+      { label: "Sparse", sub: "", score: 1 },
+      { label: "Abundant", sub: "", score: 2 },
+      { label: "Thinning", sub: "", score: 3 },
+      { label: "Bald areas", sub: "", score: 4 },
+      { label: "Mostly bald", sub: "", score: 5 },
+    ]
+  },
+  {
+    key: "plantar",
+    name: "Plantar surface",
+    options: [
+      { label: "Heel-toe < 40 mm", sub: "", score: -2 },
+      { label: "Heel-toe 40–50 mm", sub: "", score: -1 },
+      { label: "> 50 mm, no crease", sub: "", score: 0 },
+      { label: "Faint red marks", sub: "", score: 1 },
+      { label: "Anterior transverse crease only", sub: "", score: 2 },
+      { label: "Creases anterior 2/3", sub: "", score: 3 },
+      { label: "Creases over entire sole", sub: "", score: 4 },
+    ]
+  },
+  {
+    key: "breast",
+    name: "Breast",
+    options: [
+      { label: "Imperceptible", sub: "", score: -1 },
+      { label: "Barely perceptible", sub: "", score: 0 },
+      { label: "Flat areola, no bud", sub: "", score: 1 },
+      { label: "Stippled areola, 1–2 mm bud", sub: "", score: 2 },
+      { label: "Raised areola, 3–4 mm bud", sub: "", score: 3 },
+      { label: "Full areola, 5–10 mm bud", sub: "", score: 4 },
+    ]
+  },
+  {
+    key: "eye_ear",
+    name: "Eye/Ear",
+    options: [
+      { label: "Lids fused tightly", sub: "", score: -2 },
+      { label: "Lids fused loosely", sub: "", score: -1 },
+      { label: "Lids open; pinna flat; stays folded", sub: "", score: 0 },
+      { label: "Slightly curved pinna; soft; slow recoil", sub: "", score: 1 },
+      { label: "Well curved pinna; soft but ready recoil", sub: "", score: 2 },
+      { label: "Formed and firm; instant recoil", sub: "", score: 3 },
+      { label: "Thick cartilage; ear stiff", sub: "", score: 4 },
+    ]
+  },
+];
+
+const ballardGenitalsMale = {
+  name: "Genitals (male)",
+  options: [
+    { label: "Scrotum flat, smooth", sub: "", score: -1 },
+    { label: "Scrotum empty, faint rugae", sub: "", score: 0 },
+    { label: "Testes in upper canal, rare rugae", sub: "", score: 1 },
+    { label: "Testes descending, few rugae", sub: "", score: 2 },
+    { label: "Testes down, good rugae", sub: "", score: 3 },
+    { label: "Testes pendulous, deep rugae", sub: "", score: 4 },
+  ]
+};
+
+const ballardGenitalsFemale = {
+  name: "Genitals (female)",
+  options: [
+    { label: "Clitoris prominent, labia flat", sub: "", score: -1 },
+    { label: "Clitoris prominent, small labia minora", sub: "", score: 0 },
+    { label: "Clitoris prominent, enlarging minora", sub: "", score: 1 },
+    { label: "Majora and minora equally prominent", sub: "", score: 2 },
+    { label: "Majora large, minora small", sub: "", score: 3 },
+    { label: "Majora cover clitoris and minora", sub: "", score: 4 },
+  ]
+};
+
+// Score→weeks mapping table (as shown on your chart)
+const ballardScoreToWeeks = [
+  { score: -10, weeks: 20 },
+  { score: -5,  weeks: 22 },
+  { score: 0,   weeks: 24 },
+  { score: 5,   weeks: 26 },
+  { score: 10,  weeks: 28 },
+  { score: 15,  weeks: 30 },
+  { score: 20,  weeks: 32 },
+  { score: 25,  weeks: 34 },
+  { score: 30,  weeks: 36 },
+  { score: 35,  weeks: 38 },
+  { score: 40,  weeks: 40 },
+  { score: 45,  weeks: 42 },
+  { score: 50,  weeks: 44 },
+];
+
+function ballardWeeksFromScore(totalScore){
+  if(!Number.isFinite(totalScore)) return null;
+  const pts = ballardScoreToWeeks;
+  if(totalScore <= pts[0].score) return pts[0].weeks;
+  if(totalScore >= pts[pts.length-1].score) return pts[pts.length-1].weeks;
+
+  for(let i=0;i<pts.length-1;i++){
+    const a = pts[i], b = pts[i+1];
+    if(totalScore >= a.score && totalScore <= b.score){
+      const t = (totalScore - a.score) / (b.score - a.score);
+      return a.weeks + t * (b.weeks - a.weeks);
     }
-    return s;
   }
+  return null;
+}
 
-  function makeHelpRow(text){
-    const box = document.createElement("div");
-    box.className = "helpbox";
-    box.style.display = "none";
-    box.textContent = text;
-    return box;
-  }
+// Creates a tap-card item block and stores the chosen score in dataset + recalcs
+function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0){
+  const block = document.createElement("div");
+  block.className = "itemblock";
+  block.dataset.groupId = groupId;
+  block.dataset.value = String(options[defaultIndex]?.score ?? 0);
 
-  function renderBallard(){
-    const neuro = el("ballard-neuro");
-    const phys  = el("ballard-phys");
-    neuro.innerHTML = "";
-    phys.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "itemhead";
 
-    ballardNeuroItems.forEach((name,i)=>{
-      const row = document.createElement("div");
-      row.className="row";
+  const h4 = document.createElement("div");
+  h4.innerHTML = `<h4>${title}</h4>${hint ? `<div class="smallhint">${hint}</div>` : ""}`;
 
-      const lab = document.createElement("label");
-      const left = document.createElement("span");
-      left.textContent = name;
-      const help = document.createElement("span");
-      help.className="helpbtn";
-      help.textContent="?";
-      lab.appendChild(left);
-      lab.appendChild(help);
+  head.appendChild(h4);
+  block.appendChild(head);
 
-      const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors.`);
+  const cards = document.createElement("div");
+  cards.className = "cards";
 
-      const sel = makeScoreSelect(`bN${i}`, -1, 5, 1);
-      sel.addEventListener("change", calcBallard);
-      help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
+  options.forEach((opt, idx) => {
+    const c = document.createElement("div");
+    c.className = "cardopt" + (idx===defaultIndex ? " active" : "");
+    c.setAttribute("role","button");
+    c.setAttribute("tabindex","0");
+    c.dataset.score = String(opt.score);
 
-      row.appendChild(lab); row.appendChild(sel); row.appendChild(helpBox);
-      neuro.appendChild(row);
-    });
+    c.innerHTML = `
+      <div class="top">
+        <div class="label">${opt.label}</div>
+        <div class="score">${opt.score}</div>
+      </div>
+      ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
+    `;
 
-    // Physical base items
-    ballardPhysBase.forEach((name,i)=>{
-      const row = document.createElement("div");
-      row.className="row";
-
-      const lab = document.createElement("label");
-      const left = document.createElement("span");
-      left.textContent = name;
-      const help = document.createElement("span");
-      help.className="helpbtn";
-      help.textContent="?";
-      lab.appendChild(left);
-      lab.appendChild(help);
-
-      const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors.`);
-      const sel = makeScoreSelect(`bP${i}`, -1, 5, 1);
-      sel.addEventListener("change", calcBallard);
-      help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
-
-      row.appendChild(lab); row.appendChild(sel); row.appendChild(helpBox);
-      phys.appendChild(row);
-    });
-
-    // Sex-specific genitals item (render container)
-    const genWrap = document.createElement("div");
-    genWrap.className="row";
-    genWrap.id = "ballardGenWrap";
-    phys.appendChild(genWrap);
-
-    el("ballardSex").addEventListener("change", renderBallardGenitals);
-    renderBallardGenitals();
-
-    calcBallard();
-  }
-
-  function renderBallardGenitals(){
-    const sex = el("ballardSex").value; // male/female
-    const genWrap = el("ballardGenWrap");
-    if(!genWrap) return;
-    genWrap.innerHTML = "";
-
-    const name = (sex === "male") ? ballardGenMale : ballardGenFemale;
-
-    const lab = document.createElement("label");
-    const left = document.createElement("span");
-    left.textContent = name;
-    const help = document.createElement("span");
-    help.className="helpbtn";
-    help.textContent="?";
-    lab.appendChild(left);
-    lab.appendChild(help);
-
-    const helpBox = makeHelpRow(`Select the score for "${name}" using the Ballard chart descriptors (sex-specific).`);
-
-    // Use a dedicated id so both sexes don't share state unexpectedly
-    const selId = (sex === "male") ? "bGm" : "bGf";
-    const sel = makeScoreSelect(selId, -1, 5, 1);
-    sel.addEventListener("change", calcBallard);
-    help.addEventListener("click", ()=> helpBox.style.display = (helpBox.style.display==="none"||helpBox.style.display==="")?"block":"none");
-
-    genWrap.appendChild(lab);
-    genWrap.appendChild(sel);
-    genWrap.appendChild(helpBox);
-
-    calcBallard();
-  }
-
-  function calcBallard(){
-    let neuro = 0, phys = 0;
-
-    for(let i=0;i<ballardNeuroItems.length;i++){
-      neuro += Number(el(`bN${i}`)?.value ?? 0);
+    function activate(){
+      // deactivate siblings
+      [...cards.querySelectorAll(".cardopt")].forEach(x => x.classList.remove("active"));
+      c.classList.add("active");
+      block.dataset.value = String(opt.score);
+      calcBallard();
     }
+    c.addEventListener("click", activate);
+    c.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); activate(); } });
 
-    for(let i=0;i<ballardPhysBase.length;i++){
-      phys += Number(el(`bP${i}`)?.value ?? 0);
-    }
+    cards.appendChild(c);
+  });
 
-    // Add genital score based on selected sex (if exists)
-    const sex = el("ballardSex")?.value ?? "male";
-    const gId = (sex === "male") ? "bGm" : "bGf";
-    phys += Number(el(gId)?.value ?? 0);
+  block.appendChild(cards);
+  host.appendChild(block);
+}
 
-    const total = neuro + phys;
+function getGroupValue(groupId){
+  const block = document.querySelector(`.itemblock[data-group-id="${groupId}"]`);
+  if(!block) return 0;
+  const v = Number(block.dataset.value ?? 0);
+  return Number.isFinite(v) ? v : 0;
+}
 
-    // Common Ballard linear mapping used in tables:
-    // Total score 0 → 24 weeks; each +5 points → +2 weeks (0.4 weeks per point).
-    const gaWeeks = 24 + 0.4 * total;
+function renderBallard(){
+  const neuroHost = el("ballard-neuro");
+  const physHost  = el("ballard-phys");
+  if(!neuroHost || !physHost) return;
 
-    el("ballardNeuroOut").textContent = String(neuro);
-    el("ballardPhysOut").textContent = String(phys);
-    el("ballardTotalOut").textContent = String(total);
-    el("ballardGaOut").textContent = `${gaWeeks.toFixed(1)} weeks`;
-  }
-  renderBallard();
+  neuroHost.innerHTML = "";
+  physHost.innerHTML = "";
+
+  ballardNeuroConfig.forEach(item => {
+    renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0);
+  });
+
+  ballardPhysicalConfigBase.forEach(item => {
+    renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0);
+  });
+
+  // Sex-specific genitals (re-rendered on sex change)
+  const sex = el("ballardSex")?.value ?? "male";
+  const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
+  renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0);
+
+  calcBallard();
+}
+
+function calcBallard(){
+  let neuro = 0, phys = 0;
+
+  ballardNeuroConfig.forEach(item => {
+    neuro += getGroupValue(`bn_${item.key}`);
+  });
+
+  ballardPhysicalConfigBase.forEach(item => {
+    phys += getGroupValue(`bp_${item.key}`);
+  });
+
+  phys += getGroupValue("bp_genitals");
+
+  const total = neuro + phys;
+  const gaWeeks = ballardWeeksFromScore(total);
+
+  const ageDays = numOrNull(el("ballardAgeDays")?.value);
+  const cgaWeeks = (gaWeeks != null && ageDays != null) ? (gaWeeks + ageDays/7) : null;
+
+  el("ballardNeuroOut").textContent = String(neuro);
+  el("ballardPhysOut").textContent = String(phys);
+  el("ballardTotalOut").textContent = String(total);
+  el("ballardGaOut").textContent = gaWeeks==null ? "—" : `${gaWeeks.toFixed(1)} weeks`;
+  el("ballardCgaOut").textContent = cgaWeeks==null ? "—" : `${cgaWeeks.toFixed(1)} weeks`;
+}
+
+// hooks
+el("ballardSex")?.addEventListener("change", renderBallard);
+el("ballardAgeDays")?.addEventListener("input", calcBallard);
+
+renderBallard();
 
  // ===================== THOMPSON SCORE =====================
 // Options are shown as "Description - score" but the stored value is the numeric score.

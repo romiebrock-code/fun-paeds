@@ -1,4 +1,4 @@
-const CACHE = "fun-paeds-v3";
+const CACHE = "fun-paeds-v4";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
