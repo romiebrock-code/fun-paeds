@@ -99,25 +99,21 @@
     .itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
     .smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
 
-    /* Ballard maneuver illustration box (Option A) */
-    .maneuverBox{
-      margin: 8px 0 10px;
-      padding: 10px;
-      border-radius: 14px;
+    /* Ballard neuro mini-icons (inline SVG) */
+    .thumbsvg{
+      width: 78px;
+      height: 52px;
+      border-radius: 12px;
       border: 1px solid #eaecf0;
-      background: #f8fafc;
+      background: #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 auto;
     }
-    .maneuverBox .cap{
-      font-size: 12px;
-      color:#475467;
-      margin-bottom: 8px;
-      line-height: 1.25;
-    }
-    .maneuverBox svg{
-      width: 100%;
-      height: auto;
-      display:block;
-    }
+    .thumbsvg svg{ width: 72px; height: 44px; }
+    .cardopt .top { align-items: center; }
+    .cardopt .leftside { display:flex; gap:10px; align-items:center; }
   </style>
 </head>
 
@@ -132,6 +128,8 @@
           <option value="ballard">Ballard Score</option>
           <option value="thompson">Thompson Score</option>
           <option value="jaundice">Jaundice (Photo/Exchange)</option>
+          <option value="gir">Glucose Infusion Rate (GIR)</option>
+          <option value="maint">Maintenance Fluids</option>
         </select>
       </div>
     </div>
@@ -387,6 +385,151 @@
       </div>
     </section>
 
+    <!-- ===================== GIR ===================== -->
+    <section id="sec-gir" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Glucose Infusion Rate (GIR)
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpGirBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpGirBox">
+            GIR is in <b>mg/kg/min</b>. You can calculate it from:
+            <ul style="margin:8px 0 0 18px; padding:0;">
+              <li><b>mL/hr + dextrose %</b> (most common on IV pumps)</li>
+              <li><b>mL/kg/day + dextrose %</b> (useful if you’re thinking in daily totals)</li>
+            </ul>
+            Formula references are standard: GIR depends on infusion rate, dextrose concentration, weight. :contentReference[oaicite:1]{index=1}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="two">
+          <div class="row">
+            <label>Weight <span class="unit">kg</span></label>
+            <input id="girWkg" inputmode="decimal" placeholder="e.g. 1.2" />
+          </div>
+          <div class="row">
+            <label>Dextrose concentration <span class="unit">%</span></label>
+            <input id="girDex" inputmode="decimal" value="10" />
+          </div>
+        </div>
+
+        <div class="row">
+          <label>
+            I’m entering
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpGirModeBtn">?</span>
+            </span>
+          </label>
+          <div class="seg" style="grid-template-columns: repeat(3, 1fr);">
+            <button id="g1" class="active" type="button">Rate (mL/hr)</button>
+            <button id="g2" type="button">mL/kg/day</button>
+            <button id="g3" type="button">Target GIR</button>
+          </div>
+          <div class="helpbox" id="helpGirModeBox">
+            <b>Rate</b>: enter pump rate in mL/hr. <b>mL/kg/day</b>: enter daily fluid per kg. <b>Target</b>: enter desired GIR to get required rate.
+          </div>
+        </div>
+
+        <div class="row" id="girRateRow">
+          <label>Infusion rate <span class="unit">mL/hr</span></label>
+          <input id="girRate" inputmode="decimal" placeholder="e.g. 3.0" />
+        </div>
+
+        <div class="row" id="girMlkdRow" style="display:none">
+          <label>Fluid rate <span class="unit">mL/kg/day</span></label>
+          <input id="girMlkd" inputmode="decimal" placeholder="e.g. 100" />
+        </div>
+
+        <div class="row" id="girTargetRow" style="display:none">
+          <label>Target GIR <span class="unit">mg/kg/min</span></label>
+          <input id="girTarget" inputmode="decimal" placeholder="e.g. 6" />
+          <div class="small" style="margin-top:6px">
+            Typical targets often used: term ~4–6, preterm ~6–8 (protocols vary). :contentReference[oaicite:2]{index=2}
+          </div>
+        </div>
+      </div>
+
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>GIR</span><span id="girOut" class="bold">—</span></div>
+        <div class="rrow"><span>Equivalent mL/kg/day</span><span id="girMlkdOut" class="bold">—</span></div>
+        <div class="rrow"><span>Required rate for target</span><span id="girReqRateOut" class="bold">—</span></div>
+        <div class="warn" id="girWarn"></div>
+        <div class="foot">Clinical support only — confirm with local protocol and current glucose monitoring.</div>
+      </div>
+    </section>
+
+    <!-- ===================== MAINTENANCE ===================== -->
+    <section id="sec-maint" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            Maintenance fluids
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpMaintBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpMaintBox">
+            Standard paediatric maintenance is often calculated using Holliday–Segar (100/50/20 mL/kg/day) or 4-2-1 mL/kg/hr.
+            WHO Pocket Book discusses IV maintenance fluids and choice of isotonic solutions + glucose where appropriate. :contentReference[oaicite:3]{index=3}
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="two">
+          <div class="row">
+            <label>Weight <span class="unit">kg</span></label>
+            <input id="mfWkg" inputmode="decimal" placeholder="e.g. 12" />
+          </div>
+
+          <div class="row">
+            <label>Method</label>
+            <select id="mfMethod">
+              <option value="hs" selected>Holliday–Segar (100/50/20 per day)</option>
+              <option value="421">4-2-1 rule (per hour)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>
+            Clinical adjustment (optional)
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpMaintAdjBtn">?</span>
+            </span>
+          </label>
+          <select id="mfAdj">
+            <option value="1" selected>None (x1.0)</option>
+            <option value="0.8">Restrict (x0.8)</option>
+            <option value="0.7">Restrict more (x0.7)</option>
+            <option value="1.2">Increase (x1.2)</option>
+            <option value="1.5">Increase (x1.5)</option>
+          </select>
+          <div class="helpbox" id="helpMaintAdjBox">
+            Use this only if your senior/protocol advises (e.g., cardiac/renal restriction, extra losses). It simply scales the calculated maintenance.
+          </div>
+        </div>
+      </div>
+
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Maintenance per day</span><span id="mfDayOut" class="bold">—</span></div>
+        <div class="rrow"><span>Maintenance per hour</span><span id="mfHrOut" class="bold">—</span></div>
+        <div class="divider"></div>
+        <div class="small">
+          Tip: For IV maintenance, WHO commonly recommends isotonic fluids (e.g., RL/NS) with glucose where needed; always match to electrolytes and clinical state. :contentReference[oaicite:4]{index=4}
+        </div>
+        <div class="warn" id="mfWarn"></div>
+        <div class="foot">Clinical support only — assess dehydration/shock/ongoing losses separately.</div>
+      </div>
+    </section>
+
   </div>
 
 <script>
@@ -402,6 +545,8 @@
     ballard: document.getElementById("sec-ballard"),
     thompson: document.getElementById("sec-thompson"),
     jaundice: document.getElementById("sec-jaundice"),
+    gir: document.getElementById("sec-gir"),
+    maint: document.getElementById("sec-maint"),
   };
   function showSection(key){
     Object.entries(sections).forEach(([k, el]) => el.style.display = (k===key) ? "" : "none");
@@ -425,6 +570,10 @@
   toggleHelp("helpBallardBtn","helpBallardBox");
   toggleHelp("helpThompsonBtn","helpThompsonBox");
   toggleHelp("helpJaundiceBtn","helpJaundiceBox");
+  toggleHelp("helpGirBtn","helpGirBox");
+  toggleHelp("helpGirModeBtn","helpGirModeBox");
+  toggleHelp("helpMaintBtn","helpMaintBox");
+  toggleHelp("helpMaintAdjBtn","helpMaintAdjBox");
 
   // ===================== COMMON HELPERS =====================
   const el = (id)=>document.getElementById(id);
@@ -511,8 +660,6 @@
     const wKg = (wG != null && wG > 0) ? (wG/1000) : null;
     const feedsPerDay = (h != null && h > 0) ? (24/h) : null;
 
-    // Convert TFI to daily equivalent
-    // If entered as mL/kg/hour, daily = *24
     const tfiDaily = (tfiVal!=null) ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal) : null;
 
     const total = (wKg!=null && tfiDaily!=null) ? (wKg*tfiDaily) : null;
@@ -569,8 +716,8 @@
 
     const hasAnyDaily = (ebmDay != null) || (ivfDay != null);
     const deliveredDay = ( (ebmDay ?? 0) + (ivfDay ?? 0) );
-    const actualTfi = (wKg != null && wKg > 0 && hasAnyDaily) ? (deliveredDay / wKg) : null;      // mL/kg/day
-    const actualTfiHr = (actualTfi != null) ? (actualTfi / 24) : null;                              // mL/kg/hr
+    const actualTfi = (wKg != null && wKg > 0 && hasAnyDaily) ? (deliveredDay / wKg) : null;
+    const actualTfiHr = (actualTfi != null) ? (actualTfi / 24) : null;
 
     el("total").textContent = total==null ? "—" : `${fmt(total)} mL/day`;
     el("totalHr").textContent = totalPerHour==null ? "—" : `${fmt(totalPerHour)} mL/hr`;
@@ -586,163 +733,17 @@
   }
   calcFluids();
 
-  // ===================== BALLARD (Option A: maneuver image + choices) =====================
-
-  function ballardManeuverSvg(type){
-    // All-original simplified teaching diagrams (not copies of Ballard chart).
-    const stroke = "#111827";
-    const faint = "#e5e7eb";
-    const mid = "#9ca3af";
-    const accent = "#0ea5e9";
-
-    const wrap = (inner) => `
-      <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ballard maneuver illustration">
-        <rect x="10" y="10" width="700" height="400" rx="24" fill="#ffffff" stroke="${faint}" stroke-width="3"/>
-        ${inner}
-      </svg>
-    `;
-
-    if(type==="posture"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Posture (observe at rest)</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Look at resting flexion of arms/legs.</text>
-
-        <ellipse cx="210" cy="230" rx="110" ry="135" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-        <circle cx="210" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-
-        <path d="M160 205 Q120 230 120 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <path d="M260 205 Q300 230 300 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
-
-        <path d="M170 300 Q160 340 200 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
-        <path d="M250 300 Q260 340 220 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
-
-        <text x="410" y="200" font-size="18" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="700">Tip:</text>
-        <text x="410" y="230" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more flexion.</text>
-        <text x="410" y="255" font-size="16" font-family="system-ui, -apple-system" fill="#475467">Very preterm → more extension.</text>
-
-        <line x1="360" y1="215" x2="310" y2="215" stroke="${mid}" stroke-width="3"/>
-        <circle cx="310" cy="215" r="5" fill="${mid}"/>
-      `);
-    }
-
-    if(type==="square_window"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Square window (wrist)</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex hand toward forearm and estimate the angle.</text>
-
-        <rect x="80" y="205" width="320" height="70" rx="35" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-        <circle cx="410" cy="240" r="12" fill="${stroke}"/>
-
-        <path d="M410 240 L520 140" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
-        <path d="M410 240 L540 240" stroke="${accent}" stroke-width="10" stroke-linecap="round"/>
-        <path d="M410 240 L520 330" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
-
-        <path d="M450 240 A40 40 0 0 1 420 200" fill="none" stroke="${accent}" stroke-width="6"/>
-        <text x="455" y="205" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
-
-        <text x="80" y="330" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (toward 0°).</text>
-      `);
-    }
-
-    if(type==="arm_recoil"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Arm recoil</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Briefly extend the arm, release, then observe recoil.</text>
-
-        <ellipse cx="200" cy="250" rx="120" ry="130" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-        <circle cx="200" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-
-        <line x1="270" y1="230" x2="410" y2="230" stroke="${mid}" stroke-width="12" stroke-linecap="round"/>
-        <circle cx="270" cy="230" r="10" fill="${stroke}"/>
-
-        <path d="M270 230 Q340 190 340 150" stroke="${accent}" stroke-width="12" fill="none" stroke-linecap="round"/>
-
-        <path d="M390 210 l20 20 l-20 20" fill="none" stroke="${mid}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        <text x="430" y="235" font-size="16" font-family="system-ui, -apple-system" fill="#475467">extend</text>
-
-        <path d="M330 170 l-20 -20 l20 -20" fill="none" stroke="${accent}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-        <text x="360" y="170" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">recoil</text>
-
-        <text x="420" y="300" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → stronger recoil (more flexion).</text>
-      `);
-    }
-
-    if(type==="popliteal"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Popliteal angle</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex thigh to abdomen, then extend lower leg and estimate angle.</text>
-
-        <line x1="120" y1="260" x2="320" y2="260" stroke="${stroke}" stroke-width="14" stroke-linecap="round"/>
-        <circle cx="320" cy="260" r="12" fill="${stroke}"/>
-
-        <line x1="320" y1="260" x2="460" y2="150" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
-
-        <path d="M360 260 A60 60 0 0 0 332 212" fill="none" stroke="${accent}" stroke-width="8"/>
-        <text x="392" y="235" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
-
-        <line x1="120" y1="310" x2="600" y2="310" stroke="${faint}" stroke-width="6"/>
-        <text x="120" y="345" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (more resistance to extension).</text>
-      `);
-    }
-
-    if(type==="scarf"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Scarf sign</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Pull arm across chest like a scarf; note elbow position vs midline.</text>
-
-        <ellipse cx="230" cy="255" rx="130" ry="145" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-        <circle cx="230" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-
-        <line x1="230" y1="125" x2="230" y2="380" stroke="${mid}" stroke-width="4" stroke-dasharray="8 10"/>
-        <text x="245" y="138" font-size="14" font-family="system-ui, -apple-system" fill="${mid}">midline</text>
-
-        <line x1="315" y1="240" x2="170" y2="280" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
-        <circle cx="170" cy="280" r="10" fill="${accent}"/>
-
-        <text x="410" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">elbow position</text>
-        <line x1="390" y1="255" x2="185" y2="285" stroke="${faint}" stroke-width="3"/>
-      `);
-    }
-
-    if(type==="heel_to_ear"){
-      return wrap(`
-        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Heel-to-ear</text>
-        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.</text>
-
-        <circle cx="170" cy="160" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-        <circle cx="205" cy="160" r="10" fill="${stroke}"/>
-
-        <rect x="160" y="210" width="220" height="150" rx="70" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
-
-        <path d="M360 340 Q300 270 250 220" stroke="${accent}" stroke-width="14" fill="none" stroke-linecap="round"/>
-        <circle cx="250" cy="220" r="10" fill="${accent}"/>
-
-        <path d="M240 215 l-22 -12 l6 24 z" fill="${accent}"/>
-
-        <text x="430" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more resistance → heel stays farther away.</text>
-      `);
-    }
-
-    return wrap(`<text x="40" y="70" font-size="24" font-family="system-ui" fill="${stroke}">Maneuver</text>`);
-  }
-
+  // ===================== BALLARD (TAP-CARDS, STAND-ALONE) =====================
   const ballardNeuroConfig = [
-    {
-      key: "posture",
-      name: "Posture",
-      hint: "Observe resting tone/flexion at rest.",
+    { key: "posture", name: "Posture", hint: "Observe resting tone/flexion at rest.",
       options: [
         { label: "Extremities extended", sub: "Very little flexion at rest", score: 0 },
         { label: "Slight flexion", sub: "Some flexion of hips/knees/arms", score: 1 },
         { label: "Moderate flexion", sub: "More flexion in limbs", score: 2 },
         { label: "Good flexion", sub: "Limbs clearly flexed", score: 3 },
         { label: "Tight flexion", sub: "Strongly flexed posture", score: 4 },
-      ]
-    },
-    {
-      key: "square_window",
-      name: "Square window (wrist)",
-      hint: "Flex hand toward forearm; estimate angle at wrist.",
+      ]},
+    { key: "square_window", name: "Square window (wrist)", hint: "Flex hand toward forearm; estimate angle at wrist.",
       options: [
         { label: "> 90°", sub: "Very limited flexion", score: -1 },
         { label: "90°", sub: "", score: 0 },
@@ -750,24 +751,16 @@
         { label: "45°", sub: "", score: 2 },
         { label: "30°", sub: "", score: 3 },
         { label: "0°", sub: "Hand flat on forearm", score: 4 },
-      ]
-    },
-    {
-      key: "arm_recoil",
-      name: "Arm recoil",
-      hint: "Briefly extend arm, then release and see recoil angle.",
+      ]},
+    { key: "arm_recoil", name: "Arm recoil", hint: "Briefly extend arm, then release and see recoil angle.",
       options: [
         { label: "No recoil", sub: "Remains at ~180°", score: 0 },
         { label: "Recoil 140–180°", sub: "", score: 1 },
         { label: "Recoil 110–140°", sub: "", score: 2 },
         { label: "Recoil 90–110°", sub: "", score: 3 },
         { label: "Recoil < 90°", sub: "Strong recoil", score: 4 },
-      ]
-    },
-    {
-      key: "popliteal",
-      name: "Popliteal angle",
-      hint: "Flex thigh to abdomen then extend lower leg; estimate angle.",
+      ]},
+    { key: "popliteal", name: "Popliteal angle", hint: "Flex thigh to abdomen then extend lower leg; estimate angle.",
       options: [
         { label: "180°", sub: "", score: -1 },
         { label: "160°", sub: "", score: 0 },
@@ -776,138 +769,94 @@
         { label: "100°", sub: "", score: 3 },
         { label: "90°", sub: "", score: 4 },
         { label: "< 90°", sub: "Marked resistance", score: 5 },
-      ]
-    },
-    {
-      key: "scarf",
-      name: "Scarf sign",
-      hint: "Pull arm across chest like a scarf; note where the elbow lands.",
+      ]},
+    { key: "scarf", name: "Scarf sign", hint: "Pull arm across chest like a scarf; note where the elbow lands.",
       options: [
         { label: "Elbow crosses midline easily", sub: "Very little resistance", score: 0 },
         { label: "Elbow reaches midline", sub: "", score: 1 },
         { label: "Elbow does not reach midline", sub: "", score: 2 },
         { label: "Elbow well short of midline", sub: "Clear resistance", score: 3 },
         { label: "Marked resistance", sub: "Elbow far from midline", score: 4 },
-      ]
-    },
-    {
-      key: "heel_to_ear",
-      name: "Heel to ear",
-      hint: "Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.",
+      ]},
+    { key: "heel_to_ear", name: "Heel to ear", hint: "Bring heel toward ipsilateral ear without lifting pelvis; assess resistance.",
       options: [
         { label: "Heel reaches ear", sub: "Little resistance", score: 0 },
         { label: "Heel approaches ear", sub: "Minimal resistance", score: 1 },
         { label: "Moderate resistance", sub: "Heel not close to ear", score: 2 },
         { label: "Good resistance", sub: "Heel far from ear", score: 3 },
         { label: "Marked resistance", sub: "Heel very far from ear", score: 4 },
-      ]
-    },
+      ]},
   ];
 
   const ballardPhysicalConfigBase = [
-    {
-      key: "skin",
-      name: "Skin",
-      options: [
-        { label: "Sticky, friable, transparent", sub: "", score: -1 },
-        { label: "Gelatinous, red, translucent", sub: "", score: 0 },
-        { label: "Smooth, pink; visible veins", sub: "", score: 1 },
-        { label: "Superficial peeling and/or rash; few veins", sub: "", score: 2 },
-        { label: "Cracking, pale areas; rare veins", sub: "", score: 3 },
-        { label: "Parchment; deep cracking; no vessels", sub: "", score: 4 },
-        { label: "Leathery, cracked, wrinkled", sub: "", score: 5 },
-      ]
-    },
-    {
-      key: "lanugo",
-      name: "Lanugo",
-      options: [
-        { label: "None", sub: "", score: 0 },
-        { label: "Sparse", sub: "", score: 1 },
-        { label: "Abundant", sub: "", score: 2 },
-        { label: "Thinning", sub: "", score: 3 },
-        { label: "Bald areas", sub: "", score: 4 },
-        { label: "Mostly bald", sub: "", score: 5 },
-      ]
-    },
-    {
-      key: "plantar",
-      name: "Plantar surface",
-      options: [
-        { label: "Heel-toe < 40 mm", sub: "", score: -2 },
-        { label: "Heel-toe 40–50 mm", sub: "", score: -1 },
-        { label: "> 50 mm, no crease", sub: "", score: 0 },
-        { label: "Faint red marks", sub: "", score: 1 },
-        { label: "Anterior transverse crease only", sub: "", score: 2 },
-        { label: "Creases anterior 2/3", sub: "", score: 3 },
-        { label: "Creases over entire sole", sub: "", score: 4 },
-      ]
-    },
-    {
-      key: "breast",
-      name: "Breast",
-      options: [
-        { label: "Imperceptible", sub: "", score: -1 },
-        { label: "Barely perceptible", sub: "", score: 0 },
-        { label: "Flat areola, no bud", sub: "", score: 1 },
-        { label: "Stippled areola, 1–2 mm bud", sub: "", score: 2 },
-        { label: "Raised areola, 3–4 mm bud", sub: "", score: 3 },
-        { label: "Full areola, 5–10 mm bud", sub: "", score: 4 },
-      ]
-    },
-    {
-      key: "eye_ear",
-      name: "Eye/Ear",
-      options: [
-        { label: "Lids fused tightly", sub: "", score: -2 },
-        { label: "Lids fused loosely", sub: "", score: -1 },
-        { label: "Lids open; pinna flat; stays folded", sub: "", score: 0 },
-        { label: "Slightly curved pinna; soft; slow recoil", sub: "", score: 1 },
-        { label: "Well curved pinna; soft but ready recoil", sub: "", score: 2 },
-        { label: "Formed and firm; instant recoil", sub: "", score: 3 },
-        { label: "Thick cartilage; ear stiff", sub: "", score: 4 },
-      ]
-    },
+    { key: "skin", name: "Skin", options: [
+      { label: "Sticky, friable, transparent", sub: "", score: -1 },
+      { label: "Gelatinous, red, translucent", sub: "", score: 0 },
+      { label: "Smooth, pink; visible veins", sub: "", score: 1 },
+      { label: "Superficial peeling and/or rash; few veins", sub: "", score: 2 },
+      { label: "Cracking, pale areas; rare veins", sub: "", score: 3 },
+      { label: "Parchment; deep cracking; no vessels", sub: "", score: 4 },
+      { label: "Leathery, cracked, wrinkled", sub: "", score: 5 },
+    ]},
+    { key: "lanugo", name: "Lanugo", options: [
+      { label: "None", sub: "", score: 0 },
+      { label: "Sparse", sub: "", score: 1 },
+      { label: "Abundant", sub: "", score: 2 },
+      { label: "Thinning", sub: "", score: 3 },
+      { label: "Bald areas", sub: "", score: 4 },
+      { label: "Mostly bald", sub: "", score: 5 },
+    ]},
+    { key: "plantar", name: "Plantar surface", options: [
+      { label: "Heel-toe < 40 mm", sub: "", score: -2 },
+      { label: "Heel-toe 40–50 mm", sub: "", score: -1 },
+      { label: "> 50 mm, no crease", sub: "", score: 0 },
+      { label: "Faint red marks", sub: "", score: 1 },
+      { label: "Anterior transverse crease only", sub: "", score: 2 },
+      { label: "Creases anterior 2/3", sub: "", score: 3 },
+      { label: "Creases over entire sole", sub: "", score: 4 },
+    ]},
+    { key: "breast", name: "Breast", options: [
+      { label: "Imperceptible", sub: "", score: -1 },
+      { label: "Barely perceptible", sub: "", score: 0 },
+      { label: "Flat areola, no bud", sub: "", score: 1 },
+      { label: "Stippled areola, 1–2 mm bud", sub: "", score: 2 },
+      { label: "Raised areola, 3–4 mm bud", sub: "", score: 3 },
+      { label: "Full areola, 5–10 mm bud", sub: "", score: 4 },
+    ]},
+    { key: "eye_ear", name: "Eye/Ear", options: [
+      { label: "Lids fused tightly", sub: "", score: -2 },
+      { label: "Lids fused loosely", sub: "", score: -1 },
+      { label: "Lids open; pinna flat; stays folded", sub: "", score: 0 },
+      { label: "Slightly curved pinna; soft; slow recoil", sub: "", score: 1 },
+      { label: "Well curved pinna; soft but ready recoil", sub: "", score: 2 },
+      { label: "Formed and firm; instant recoil", sub: "", score: 3 },
+      { label: "Thick cartilage; ear stiff", sub: "", score: 4 },
+    ]},
   ];
 
-  const ballardGenitalsMale = {
-    name: "Genitals (male)",
-    options: [
-      { label: "Scrotum flat, smooth", sub: "", score: -1 },
-      { label: "Scrotum empty, faint rugae", sub: "", score: 0 },
-      { label: "Testes in upper canal, rare rugae", sub: "", score: 1 },
-      { label: "Testes descending, few rugae", sub: "", score: 2 },
-      { label: "Testes down, good rugae", sub: "", score: 3 },
-      { label: "Testes pendulous, deep rugae", sub: "", score: 4 },
-    ]
-  };
+  const ballardGenitalsMale = { name: "Genitals (male)", options: [
+    { label: "Scrotum flat, smooth", sub: "", score: -1 },
+    { label: "Scrotum empty, faint rugae", sub: "", score: 0 },
+    { label: "Testes in upper canal, rare rugae", sub: "", score: 1 },
+    { label: "Testes descending, few rugae", sub: "", score: 2 },
+    { label: "Testes down, good rugae", sub: "", score: 3 },
+    { label: "Testes pendulous, deep rugae", sub: "", score: 4 },
+  ]};
 
-  const ballardGenitalsFemale = {
-    name: "Genitals (female)",
-    options: [
-      { label: "Clitoris prominent, labia flat", sub: "", score: -1 },
-      { label: "Clitoris prominent, small labia minora", sub: "", score: 0 },
-      { label: "Clitoris prominent, enlarging minora", sub: "", score: 1 },
-      { label: "Majora and minora equally prominent", sub: "", score: 2 },
-      { label: "Majora large, minora small", sub: "", score: 3 },
-      { label: "Majora cover clitoris and minora", sub: "", score: 4 },
-    ]
-  };
+  const ballardGenitalsFemale = { name: "Genitals (female)", options: [
+    { label: "Clitoris prominent, labia flat", sub: "", score: -1 },
+    { label: "Clitoris prominent, small labia minora", sub: "", score: 0 },
+    { label: "Clitoris prominent, enlarging minora", sub: "", score: 1 },
+    { label: "Majora and minora equally prominent", sub: "", score: 2 },
+    { label: "Majora large, minora small", sub: "", score: 3 },
+    { label: "Majora cover clitoris and minora", sub: "", score: 4 },
+  ]};
 
   const ballardScoreToWeeks = [
-    { score: -10, weeks: 20 },
-    { score: -5,  weeks: 22 },
-    { score: 0,   weeks: 24 },
-    { score: 5,   weeks: 26 },
-    { score: 10,  weeks: 28 },
-    { score: 15,  weeks: 30 },
-    { score: 20,  weeks: 32 },
-    { score: 25,  weeks: 34 },
-    { score: 30,  weeks: 36 },
-    { score: 35,  weeks: 38 },
-    { score: 40,  weeks: 40 },
-    { score: 45,  weeks: 42 },
-    { score: 50,  weeks: 44 },
+    { score: -10, weeks: 20 }, { score: -5, weeks: 22 }, { score: 0, weeks: 24 }, { score: 5, weeks: 26 },
+    { score: 10, weeks: 28 }, { score: 15, weeks: 30 }, { score: 20, weeks: 32 }, { score: 25, weeks: 34 },
+    { score: 30, weeks: 36 }, { score: 35, weeks: 38 }, { score: 40, weeks: 40 }, { score: 45, weeks: 42 },
+    { score: 50, weeks: 44 },
   ];
 
   function ballardWeeksFromScore(totalScore){
@@ -915,7 +864,6 @@
     const pts = ballardScoreToWeeks;
     if(totalScore <= pts[0].score) return pts[0].weeks;
     if(totalScore >= pts[pts.length-1].score) return pts[pts.length-1].weeks;
-
     for(let i=0;i<pts.length-1;i++){
       const a = pts[i], b = pts[i+1];
       if(totalScore >= a.score && totalScore <= b.score){
@@ -926,8 +874,7 @@
     return null;
   }
 
-  // Creates a tap-card item block and stores the chosen score in dataset + recalcs
-  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, showManeuver=false, maneuverType=null){
+  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, iconType=null){
     const block = document.createElement("div");
     block.className = "itemblock";
     block.dataset.groupId = groupId;
@@ -942,16 +889,6 @@
     head.appendChild(h4);
     block.appendChild(head);
 
-    if(showManeuver && maneuverType){
-      const m = document.createElement("div");
-      m.className = "maneuverBox";
-      m.innerHTML = `
-        <div class="cap">How to do it (quick visual)</div>
-        ${ballardManeuverSvg(maneuverType)}
-      `;
-      block.appendChild(m);
-    }
-
     const cards = document.createElement("div");
     cards.className = "cards";
 
@@ -962,11 +899,16 @@
       c.setAttribute("tabindex","0");
       c.dataset.score = String(opt.score);
 
+      const iconHtml = iconType ? `<div class="thumbsvg">${ballardIconSvg(iconType, opt.score)}</div>` : "";
+
       c.innerHTML = `
         <div class="top">
-          <div>
-            <div class="label">${opt.label}</div>
-            ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
+          <div class="leftside">
+            ${iconHtml}
+            <div>
+              <div class="label">${opt.label}</div>
+              ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
+            </div>
           </div>
           <div class="score">${opt.score}</div>
         </div>
@@ -1003,20 +945,17 @@
     neuroHost.innerHTML = "";
     physHost.innerHTML = "";
 
-    // Neuromuscular: show maneuver image above the choices
     ballardNeuroConfig.forEach(item => {
-      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, true, item.key);
+      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, item.key);
     });
 
-    // Physical: no maneuver image (text-only)
     ballardPhysicalConfigBase.forEach(item => {
-      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0, false, null);
+      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0);
     });
 
-    // Sex-specific genitals
     const sex = el("ballardSex")?.value ?? "male";
     const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
-    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0, false, null);
+    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0);
 
     calcBallard();
   }
@@ -1024,14 +963,8 @@
   function calcBallard(){
     let neuro = 0, phys = 0;
 
-    ballardNeuroConfig.forEach(item => {
-      neuro += getGroupValue(`bn_${item.key}`);
-    });
-
-    ballardPhysicalConfigBase.forEach(item => {
-      phys += getGroupValue(`bp_${item.key}`);
-    });
-
+    ballardNeuroConfig.forEach(item => { neuro += getGroupValue(`bn_${item.key}`); });
+    ballardPhysicalConfigBase.forEach(item => { phys += getGroupValue(`bp_${item.key}`); });
     phys += getGroupValue("bp_genitals");
 
     const total = neuro + phys;
@@ -1050,36 +983,173 @@
   el("ballardSex")?.addEventListener("change", renderBallard);
   el("ballardAgeDays")?.addEventListener("input", calcBallard);
 
+  function ballardIconSvg(type, score){
+    const norm = (v, min, max) => {
+      const x = (v - min) / (max - min);
+      return Math.max(0, Math.min(1, x));
+    };
+    const stroke = "#1f2937";
+    const thick = 3.0;
+
+    const joint = (x, y, len1, a1, len2, a2, sw=thick) => {
+      const rad = d => d * Math.PI/180;
+      const x1 = x + len1*Math.cos(rad(a1));
+      const y1 = y + len1*Math.sin(rad(a1));
+      const x2 = x1 + len2*Math.cos(rad(a2));
+      const y2 = y1 + len2*Math.sin(rad(a2));
+      return `
+        <circle cx="${x}" cy="${y}" r="2.4" fill="${stroke}"/>
+        <line x1="${x}" y1="${y}" x2="${x1}" y2="${y1}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
+        <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
+      `;
+    };
+
+    const bg = `
+      <rect x="1" y="1" width="70" height="42" rx="10" fill="#ffffff"/>
+      <line x1="10" y1="34" x2="62" y2="34" stroke="#e5e7eb" stroke-width="2"/>
+    `;
+
+    if(type === "square_window"){
+      const t = norm(score, -1, 4);
+      const angle = 95 - t*95;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <line x1="10" y1="26" x2="46" y2="26" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          ${joint(46,26, 0,0, 16, -angle, thick)}
+          <circle cx="46" cy="26" r="3.2" fill="${stroke}"/>
+        </svg>
+      `;
+    }
+    if(type === "arm_recoil"){
+      const t = norm(score, 0, 4);
+      const elbow = 18 + t*18;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <line x1="14" y1="30" x2="30" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          ${joint(30,22, 16, 0, 16, 180-elbow, thick)}
+        </svg>
+      `;
+    }
+    if(type === "popliteal"){
+      const t = norm(score, -1, 5);
+      const ang = 175 - t*105;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <line x1="18" y1="18" x2="38" y2="18" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          ${joint(38,18, 0,0, 18, ang, thick)}
+          <circle cx="38" cy="18" r="3.2" fill="${stroke}"/>
+        </svg>
+      `;
+    }
+    if(type === "scarf"){
+      const t = norm(score, 0, 4);
+      const elbowX = 46 - t*18;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <line x1="36" y1="10" x2="36" y2="34" stroke="#e5e7eb" stroke-width="2"/>
+          <circle cx="28" cy="18" r="7" fill="#f3f4f6" stroke="#e5e7eb"/>
+          <line x1="28" y1="18" x2="${elbowX}" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          <circle cx="${elbowX}" cy="22" r="3.0" fill="${stroke}"/>
+        </svg>
+      `;
+    }
+    if(type === "heel_to_ear"){
+      const t = norm(score, 0, 4);
+      const heelY = 14 + t*16;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <circle cx="20" cy="14" r="6" fill="#f3f4f6" stroke="#e5e7eb"/>
+          <circle cx="25" cy="14" r="2.4" fill="${stroke}"/>
+          <line x1="46" y1="34" x2="34" y2="${heelY}" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          <circle cx="34" cy="${heelY}" r="3.0" fill="${stroke}"/>
+        </svg>
+      `;
+    }
+    if(type === "posture"){
+      const t = norm(score, 0, 4);
+      const armA = -10 - t*40;
+      const legA = 40 + t*30;
+      return `
+        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+          ${bg}
+          <line x1="34" y1="16" x2="34" y2="30" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
+          <circle cx="34" cy="12" r="5.2" fill="#f3f4f6" stroke="#e5e7eb"/>
+          ${joint(34,18, 12, armA, 10, armA-20, thick)}
+          ${joint(34,30, 12, legA, 10, legA+15, thick)}
+        </svg>
+      `;
+    }
+
+    return `
+      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
+        ${bg}
+        <text x="12" y="26" font-size="12" fill="#667085">N/A</text>
+      </svg>
+    `;
+  }
+
   renderBallard();
 
   // ===================== THOMPSON SCORE =====================
   const thompsonConfig = [
     { key: "tone", name: "Tone", options: [
-      { label: "Normal", score: 0 }, { label: "Hypertonia", score: 1 }, { label: "Hypotonia", score: 2 }, { label: "Flaccid", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Hypertonia", score: 1 },
+      { label: "Hypotonia", score: 2 },
+      { label: "Flaccid", score: 3 },
     ]},
     { key: "loc", name: "Level of consciousness", options: [
-      { label: "Normal / alert", score: 0 }, { label: "Hyperalert / irritable", score: 1 }, { label: "Lethargic", score: 2 }, { label: "Coma", score: 3 },
+      { label: "Normal / alert", score: 0 },
+      { label: "Hyperalert / irritable", score: 1 },
+      { label: "Lethargic", score: 2 },
+      { label: "Coma", score: 3 },
     ]},
     { key: "seiz", name: "Seizures", options: [
-      { label: "None", score: 0 }, { label: "Occasional", score: 1 }, { label: "Frequent", score: 2 }, { label: "Status epilepticus", score: 3 },
+      { label: "None", score: 0 },
+      { label: "Occasional", score: 1 },
+      { label: "Frequent", score: 2 },
+      { label: "Status epilepticus", score: 3 },
     ]},
     { key: "post", name: "Posture", options: [
-      { label: "Normal", score: 0 }, { label: "Mild distal flexion", score: 1 }, { label: "Strong distal flexion / decorticate", score: 2 }, { label: "Decerebrate posture", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Mild distal flexion", score: 1 },
+      { label: "Strong distal flexion / decorticate", score: 2 },
+      { label: "Decerebrate posture", score: 3 },
     ]},
     { key: "moro", name: "Moro reflex", options: [
-      { label: "Normal", score: 0 }, { label: "Partial", score: 1 }, { label: "Weak", score: 2 }, { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Partial", score: 1 },
+      { label: "Weak", score: 2 },
+      { label: "Absent", score: 3 },
     ]},
     { key: "grasp", name: "Grasp", options: [
-      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Poor", score: 1 },
+      { label: "Very weak", score: 2 },
+      { label: "Absent", score: 3 },
     ]},
     { key: "suck", name: "Suck", options: [
-      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Poor", score: 1 },
+      { label: "Very weak", score: 2 },
+      { label: "Absent", score: 3 },
     ]},
     { key: "resp", name: "Respiration", options: [
-      { label: "Normal", score: 0 }, { label: "Hyperventilation", score: 1 }, { label: "Periodic / irregular", score: 2 }, { label: "Apnoea / ventilated", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Hyperventilation", score: 1 },
+      { label: "Periodic / irregular", score: 2 },
+      { label: "Apnoea / ventilated", score: 3 },
     ]},
     { key: "font", name: "Fontanelle", options: [
-      { label: "Normal", score: 0 }, { label: "Full", score: 1 }, { label: "Tense", score: 2 }, { label: "Bulging", score: 3 },
+      { label: "Normal", score: 0 },
+      { label: "Full", score: 1 },
+      { label: "Tense", score: 2 },
+      { label: "Bulging", score: 3 },
     ]},
   ];
 
@@ -1132,10 +1202,7 @@
 
   function calcThompson(){
     let total = 0;
-    thompsonConfig.forEach(item => {
-      total += Number(el(`t_${item.key}`)?.value ?? 0);
-    });
-
+    thompsonConfig.forEach(item => { total += Number(el(`t_${item.key}`)?.value ?? 0); });
     el("thompsonTotalOut").textContent = String(total);
 
     let sev = "—";
@@ -1224,6 +1291,161 @@
     }
   }
   calcJaundice();
+
+  // ===================== GIR CALCULATOR =====================
+  let gMode = "RATE"; // RATE, MLKD, TARGET
+  const g1 = el("g1"), g2 = el("g2"), g3 = el("g3");
+  const girRateRow = el("girRateRow");
+  const girMlkdRow = el("girMlkdRow");
+  const girTargetRow = el("girTargetRow");
+
+  function setGirMode(m){
+    gMode = m;
+    g1.classList.toggle("active", gMode==="RATE");
+    g2.classList.toggle("active", gMode==="MLKD");
+    g3.classList.toggle("active", gMode==="TARGET");
+
+    girRateRow.style.display = (gMode==="RATE") ? "" : "none";
+    girMlkdRow.style.display = (gMode==="MLKD") ? "" : "none";
+    girTargetRow.style.display = (gMode==="TARGET") ? "" : "none";
+
+    calcGir();
+  }
+  g1.onclick = ()=>setGirMode("RATE");
+  g2.onclick = ()=>setGirMode("MLKD");
+  g3.onclick = ()=>setGirMode("TARGET");
+
+  ["girWkg","girDex","girRate","girMlkd","girTarget"].map(el).forEach(x => x && x.addEventListener("input", calcGir));
+
+  function calcGir(){
+    const warn = el("girWarn");
+    warn.textContent = "";
+
+    const w = numOrNull(el("girWkg").value);
+    const dexPct = numOrNull(el("girDex").value); // e.g. 10 for D10
+    const rateMlHr = numOrNull(el("girRate").value);
+    const mlkgday = numOrNull(el("girMlkd").value);
+    const target = numOrNull(el("girTarget").value);
+
+    if(w==null || w<=0){
+      el("girOut").textContent = "—";
+      el("girMlkdOut").textContent = "—";
+      el("girReqRateOut").textContent = "—";
+      warn.textContent = "Enter weight (kg).";
+      return;
+    }
+    if(dexPct==null || dexPct<0){
+      el("girOut").textContent = "—";
+      el("girMlkdOut").textContent = "—";
+      el("girReqRateOut").textContent = "—";
+      warn.textContent = "Enter dextrose concentration (%).";
+      return;
+    }
+
+    // Convert % dextrose to g/dL: D10 = 10 g/100 mL = 10 g/dL.
+    const gPerDl = dexPct;
+
+    let gir = null;         // mg/kg/min
+    let equivMlkd = null;   // mL/kg/day
+    let reqRate = null;     // mL/hr to hit target GIR
+
+    if(gMode==="RATE"){
+      if(rateMlHr==null || rateMlHr<0){
+        warn.textContent = "Enter infusion rate (mL/hr).";
+      } else {
+        // GIR = rate(mL/hr) * g/dL * 1000 / (kg * 60 * 100)
+        gir = (rateMlHr * gPerDl * 1000) / (w * 6000);
+        equivMlkd = (rateMlHr * 24) / w;
+      }
+    } else if(gMode==="MLKD"){
+      if(mlkgday==null || mlkgday<0){
+        warn.textContent = "Enter mL/kg/day.";
+      } else {
+        equivMlkd = mlkgday;
+        // GIR = (mL/kg/day * %D) / 144  (since %D == g/dL here)
+        // widely used shortcut. 
+        gir = (mlkgday * dexPct) / 144;
+      }
+    } else if(gMode==="TARGET"){
+      if(target==null || target<0){
+        warn.textContent = "Enter target GIR (mg/kg/min).";
+      } else {
+        // rearrange formula to get mL/hr:
+        // rate = GIR * kg * 60 * 100 / (g/dL * 1000)
+        // => rate = GIR * kg * 6000 / (g/dL * 1000) = GIR * kg * 6 / (g/dL)
+        // common rearrangement. 
+        if(gPerDl <= 0){
+          warn.textContent = "Dextrose % must be > 0 to compute required rate.";
+        } else {
+          reqRate = (target * w * 6) / gPerDl;
+          equivMlkd = (reqRate * 24) / w;
+          gir = target;
+        }
+      }
+    }
+
+    el("girOut").textContent = (gir==null) ? "—" : `${fmt(gir,2)} mg/kg/min`;
+    el("girMlkdOut").textContent = (equivMlkd==null) ? "—" : `${fmt(equivMlkd,1)} mL/kg/day`;
+    el("girReqRateOut").textContent = (reqRate==null) ? "—" : `${fmt(reqRate,2)} mL/hr`;
+
+    if(dexPct>25) warn.textContent = warn.textContent || "High dextrose concentration entered — confirm solution.";
+  }
+  calcGir();
+
+  // ===================== MAINTENANCE FLUIDS =====================
+  ["mfWkg","mfMethod","mfAdj"].map(el).forEach(x => x && x.addEventListener("input", calcMaint));
+  el("mfMethod").addEventListener("change", calcMaint);
+  el("mfAdj").addEventListener("change", calcMaint);
+
+  function hsDailyMl(w){
+    // Holliday–Segar 100/50/20 (mL/kg/day)
+    if(w <= 10) return 100 * w;
+    if(w <= 20) return (100*10) + (50*(w-10));
+    return (100*10) + (50*10) + (20*(w-20));
+  }
+  function rule421Hr(w){
+    // 4-2-1 rule (mL/hr)
+    if(w <= 10) return 4 * w;
+    if(w <= 20) return (4*10) + (2*(w-10));
+    return (4*10) + (2*10) + (1*(w-20));
+  }
+
+  function calcMaint(){
+    const warn = el("mfWarn");
+    warn.textContent = "";
+
+    const w = numOrNull(el("mfWkg").value);
+    const method = el("mfMethod").value;
+    const adj = Number(el("mfAdj").value ?? 1);
+
+    if(w==null || w<=0){
+      el("mfDayOut").textContent = "—";
+      el("mfHrOut").textContent = "—";
+      warn.textContent = "Enter weight (kg).";
+      return;
+    }
+
+    let day = null, hr = null;
+
+    if(method==="hs"){
+      day = hsDailyMl(w);
+      hr = day / 24;
+    } else {
+      hr = rule421Hr(w);
+      day = hr * 24;
+    }
+
+    day = day * adj;
+    hr = hr * adj;
+
+    el("mfDayOut").textContent = `${fmt(day,0)} mL/day`;
+    el("mfHrOut").textContent = `${fmt(hr,1)} mL/hr`;
+
+    if(w < 3){
+      warn.textContent = "Neonates/very small infants often use neonatal-specific fluid protocols; confirm local neonatal guideline.";
+    }
+  }
+  calcMaint();
 </script>
 </body>
 </html>
