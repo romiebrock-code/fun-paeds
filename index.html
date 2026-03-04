@@ -46,6 +46,10 @@
     .foot { color: #667085; font-size: 12px; margin-top: 10px; line-height:1.3; }
     .small { font-size: 13px; color:#475467; line-height:1.35; }
     .divider { height:1px; background:#eaecf0; margin: 10px 0; }
+    .scaleWarn {
+  color: #b45309;
+  font-weight: 800;
+}
 
     .two { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 760px){ .two { grid-template-columns: 1fr; } .topbar { flex-direction:column; align-items:stretch; } }
@@ -71,6 +75,19 @@
     .inline { display:flex; gap:10px; align-items:center; }
     .inline > * { flex:1; }
     .inline .tight { flex:0 0 150px; }
+    .pill {
+  	display:inline-flex;
+ 	 align-items:center;
+  	gap:8px;
+  	padding: 10px 12px;
+ 	border: 1px solid #d0d5dd;
+  	border-radius: 999px;
+  	background:#fff;
+  	font-weight: 750;
+  	cursor:pointer;
+  	user-select:none;
+	   }
+    .pill input { width:auto; }
 
     /* --- Ballard tap-cards --- */
     .cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -515,12 +532,24 @@
             Use this only if your senior/protocol advises (e.g., cardiac/renal restriction, extra losses). It simply scales the calculated maintenance.
           </div>
         </div>
+
+	<div class="row">
+ 	 <label>2/3 maintenance (optional)</label>
+ 	 <label class="pill" style="justify-content:flex-start;">
+   	 <input type="checkbox" id="mfTwoThirds" />
+   	 Use ⅔ maintenance
+  	</label>
+	  <div class="small" style="margin-top:4px">
+   	 Commonly used in some “unwell child” scenarios per local practice — only use if your protocol/senior advises.
+  	</div>
+	</div>
       </div>
 
       <div class="card results">
         <h3>Results</h3>
         <div class="rrow"><span>Maintenance per day</span><span id="mfDayOut" class="bold">—</span></div>
         <div class="rrow"><span>Maintenance per hour</span><span id="mfHrOut" class="bold">—</span></div>
+        <div class="rrow"><span>Scaling applied</span><span id="mfScaleOut" class="bold">—</span></div>
         <div class="divider"></div>
         <div class="small">
           Tip: For IV maintenance, WHO commonly recommends isotonic fluids (e.g., RL/NS) with glucose where needed; always match to electrolytes and clinical state. :contentReference[oaicite:4]{index=4}
@@ -1396,6 +1425,7 @@
   ["mfWkg","mfMethod","mfAdj"].map(el).forEach(x => x && x.addEventListener("input", calcMaint));
   el("mfMethod").addEventListener("change", calcMaint);
   el("mfAdj").addEventListener("change", calcMaint);
+  el("mfTwoThirds")?.addEventListener("change", calcMaint);
 
   function hsDailyMl(w){
     // Holliday–Segar 100/50/20 (mL/kg/day)
@@ -1417,11 +1447,13 @@
     const w = numOrNull(el("mfWkg").value);
     const method = el("mfMethod").value;
     const adj = Number(el("mfAdj").value ?? 1);
+    const twoThirds = el("mfTwoThirds")?.checked ? (2/3) : 1;
 
     if(w==null || w<=0){
       el("mfDayOut").textContent = "—";
       el("mfHrOut").textContent = "—";
       warn.textContent = "Enter weight (kg).";
+      el("mfScaleOut").textContent = "—";
       return;
     }
 
@@ -1435,11 +1467,22 @@
       day = hr * 24;
     }
 
-    day = day * adj;
-    hr = hr * adj;
+    day = day * adj * twoThirds;
+    hr  = hr  * adj * twoThirds;
 
     el("mfDayOut").textContent = `${fmt(day,0)} mL/day`;
     el("mfHrOut").textContent = `${fmt(hr,1)} mL/hr`;
+
+    const scaleTxt = `x${(adj * twoThirds).toFixed(2)} ${twoThirds < 1 ? "(includes ⅔ maintenance)" : ""}`.trim();
+
+   const scaleEl = el("mfScaleOut");
+   scaleEl.textContent = scaleTxt;
+
+   if(twoThirds < 1){
+           scaleEl.classList.add("scaleWarn");
+        }else{
+           scaleEl.classList.remove("scaleWarn");
+                     }
 
     if(w < 3){
       warn.textContent = "Neonates/very small infants often use neonatal-specific fluid protocols; confirm local neonatal guideline.";
