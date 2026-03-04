@@ -147,6 +147,7 @@
           <option value="jaundice">Jaundice (Photo/Exchange)</option>
           <option value="gir">Glucose Infusion Rate (GIR)</option>
           <option value="maint">Maintenance Fluids</option>
+	  <option value="apgar">APGAR</option>
         </select>
       </div>
     </div>
@@ -559,6 +560,96 @@
       </div>
     </section>
 
+<!-- ===================== APGAR ===================== -->
+<section id="sec-apgar" style="display:none">
+  <div class="card">
+    <div class="row">
+      <label>
+        APGAR score
+        <span class="inline" style="gap:6px; justify-content:flex-end;">
+          <span class="helpbtn" id="helpApgarBtn">?</span>
+        </span>
+      </label>
+      <div class="helpbox" id="helpApgarBox">
+        Score at <b>1 minute</b> and <b>5 minutes</b> (optional <b>10 minutes</b>).
+        Tap the descriptor that best fits. The total is the sum of 5 signs (0–10).
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="card" style="margin:0">
+        <h3 style="margin:0 0 10px">1 minute</h3>
+        <div class="grid" id="apgar-1"></div>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3 style="margin:0 0 10px">5 minutes</h3>
+        <div class="grid" id="apgar-5"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row">
+      <label>
+        Include 10-minute score (optional)
+        <span class="unit">for ongoing resuscitation</span>
+      </label>
+      <select id="apgarShow10">
+        <option value="no" selected>No</option>
+        <option value="yes">Yes</option>
+      </select>
+    </div>
+
+    <div id="apgar10Wrap" style="display:none">
+      <div class="card" style="margin:0">
+        <h3 style="margin:0 0 10px">10 minutes</h3>
+        <div class="grid" id="apgar-10"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card results">
+    <h3>Results</h3>
+    <div class="rrow"><span>APGAR 1 min</span><span id="apgar1Out" class="bold">—</span></div>
+    <div class="rrow"><span>APGAR 5 min</span><span id="apgar5Out" class="bold">—</span></div>
+    <div class="rrow"><span>APGAR 10 min</span><span id="apgar10Out" class="bold">—</span></div>
+
+    <div class="divider"></div>
+
+<div class="row">
+  <label>Resus status <span class="unit">tick what was required</span></label>
+  <div class="grid" style="gap:10px">
+    <label style="font-weight:650; display:flex; align-items:center; gap:10px;">
+      <input id="apgarPPV" type="checkbox" style="width:20px;height:20px;" />
+      PPV
+    </label>
+
+    <label style="font-weight:650; display:flex; align-items:center; gap:10px;">
+      <input id="apgarCC" type="checkbox" style="width:20px;height:20px;" />
+      Chest compressions
+    </label>
+
+    <label style="font-weight:650; display:flex; align-items:center; gap:10px;">
+      <input id="apgarAdr" type="checkbox" style="width:20px;height:20px;" />
+      Adrenaline
+    </label>
+  </div>
+</div>
+
+    <div class="divider"></div>
+    <div id="apgarInterp" class="ok"></div>
+    <div id="apgarWarn" class="warn"></div>
+
+    <div class="divider"></div>
+    <button id="apgarCopyBtn" type="button" style="padding:12px;border-radius:12px;border:1px solid #d0d5dd;background:#fff;font-weight:800;cursor:pointer;">
+      Copy summary
+    </button>
+
+    <div class="foot">Clinical support only — APGAR describes condition, it does not diagnose cause.</div>
+  </div>
+</section>
+
   </div>
 
 <script>
@@ -576,6 +667,7 @@
     jaundice: document.getElementById("sec-jaundice"),
     gir: document.getElementById("sec-gir"),
     maint: document.getElementById("sec-maint"),
+    apgar: document.getElementById("sec-apgar"),
   };
   function showSection(key){
     Object.entries(sections).forEach(([k, el]) => el.style.display = (k===key) ? "" : "none");
@@ -603,6 +695,7 @@
   toggleHelp("helpGirModeBtn","helpGirModeBox");
   toggleHelp("helpMaintBtn","helpMaintBox");
   toggleHelp("helpMaintAdjBtn","helpMaintAdjBox");
+  toggleHelp("helpApgarBtn","helpApgarBox");
 
   // ===================== COMMON HELPERS =====================
   const el = (id)=>document.getElementById(id);
@@ -1489,6 +1582,228 @@
     }
   }
   calcMaint();
+
+// ===================== APGAR (TAP-CARDS) =====================
+const apgarItems = [
+  {
+    key: "appearance",
+    name: "Appearance (colour)",
+    options: [
+      { label: "Blue/pale all over", score: 0 },
+      { label: "Pink body, blue extremities", score: 1 },
+      { label: "Completely pink", score: 2 },
+    ],
+  },
+  {
+    key: "pulse",
+    name: "Pulse (heart rate)",
+    options: [
+      { label: "Absent", score: 0 },
+      { label: "< 100 bpm", score: 1 },
+      { label: "≥ 100 bpm", score: 2 },
+    ],
+  },
+  {
+    key: "grimace",
+    name: "Grimace (reflex irritability)",
+    options: [
+      { label: "No response", score: 0 },
+      { label: "Grimace/weak response", score: 1 },
+      { label: "Cry/cough/sneeze/pulls away", score: 2 },
+    ],
+  },
+  {
+    key: "activity",
+    name: "Activity (muscle tone)",
+    options: [
+      { label: "Limp", score: 0 },
+      { label: "Some flexion", score: 1 },
+      { label: "Active movement", score: 2 },
+    ],
+  },
+  {
+    key: "respiration",
+    name: "Respiration",
+    options: [
+      { label: "Absent", score: 0 },
+      { label: "Slow/irregular; weak cry", score: 1 },
+      { label: "Good breathing; strong cry", score: 2 },
+    ],
+  },
+];
+
+function apgarRender(hostId, prefix){
+  const host = el(hostId);
+  if(!host) return;
+  host.innerHTML = "";
+
+  apgarItems.forEach(item => {
+    // reuse your existing card renderer look, but simplest is a select-like card group
+    const block = document.createElement("div");
+    block.className = "itemblock";
+    block.dataset.groupId = `${prefix}_${item.key}`;
+    block.dataset.value = "0";
+
+    const head = document.createElement("div");
+    head.className = "itemhead";
+    head.innerHTML = `<h4>${item.name}</h4>`;
+    block.appendChild(head);
+
+    const cards = document.createElement("div");
+    cards.className = "cards";
+
+    item.options.forEach((opt, idx) => {
+      const c = document.createElement("div");
+      c.className = "cardopt" + (idx===0 ? " active" : "");
+      c.setAttribute("role","button");
+      c.setAttribute("tabindex","0");
+      c.dataset.score = String(opt.score);
+
+      c.innerHTML = `
+        <div class="top">
+          <div class="leftside">
+            <div>
+              <div class="label">${opt.label}</div>
+            </div>
+          </div>
+          <div class="score">${opt.score}</div>
+        </div>
+      `;
+
+      function activate(){
+        [...cards.querySelectorAll(".cardopt")].forEach(x => x.classList.remove("active"));
+        c.classList.add("active");
+        block.dataset.value = String(opt.score);
+        calcApgar();
+      }
+      c.addEventListener("click", activate);
+      c.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); activate(); } });
+
+      cards.appendChild(c);
+    });
+
+    block.appendChild(cards);
+    host.appendChild(block);
+  });
+}
+
+function apgarGroupValue(groupId){
+  const block = document.querySelector(`.itemblock[data-group-id="${groupId}"]`);
+  if(!block) return 0;
+  const v = Number(block.dataset.value ?? 0);
+  return Number.isFinite(v) ? v : 0;
+}
+
+function apgarTotal(prefix){
+  let t = 0;
+  apgarItems.forEach(item => t += apgarGroupValue(`${prefix}_${item.key}`));
+  return t;
+}
+
+function apgarBand(score){
+  // Common interpretation bands (simple + practical)
+  if(score <= 3) return { band: "Severely low", cls: "warn" };
+  if(score <= 6) return { band: "Moderately low", cls: "warn" };
+  return { band: "Reassuring", cls: "ok" };
+}
+
+function calcApgar(){
+  const s1 = apgarTotal("a1");
+  const s5 = apgarTotal("a5");
+
+  const show10 = el("apgarShow10")?.value === "yes";
+  const s10 = show10 ? apgarTotal("a10") : null;
+
+  el("apgar1Out").textContent = String(s1);
+  el("apgar5Out").textContent = String(s5);
+  el("apgar10Out").textContent = (s10==null) ? "—" : String(s10);
+
+  const interp = el("apgarInterp");
+  const warn = el("apgarWarn");
+  interp.textContent = "";
+  warn.textContent = "";
+
+  const anyResus =
+  el("apgarPPV")?.checked || el("apgarCC")?.checked || el("apgarAdr")?.checked;
+
+if(anyResus && s5 >= 7){
+  // still reassuring score, but note that resus occurred
+  interp.textContent += " (Resuscitation given — document timeline and interventions.)";
+}
+
+  const b1 = apgarBand(s1);
+  const b5 = apgarBand(s5);
+
+  // keep messaging short + actionable
+  if(s5 >= 7){
+    interp.textContent = `5-min score is ${s5} (${b5.band}). Continue routine care + monitoring per context.`;
+  } else {
+    warn.textContent = `5-min score is ${s5} (${b5.band}). Ensure senior review and ongoing resuscitation/support per NRP/local protocol.`;
+  }
+
+  // extra emphasis if not improving
+  if(s1 <= 6 && s5 <= s1){
+    warn.textContent = warn.textContent || "";
+    warn.textContent += (warn.textContent ? " " : "") + "Score not improving from 1 to 5 minutes — reassess ventilation/HR and causes.";
+  }
+
+  if(s10 != null){
+    const b10 = apgarBand(s10);
+    if(s10 < 7){
+      warn.textContent += (warn.textContent ? " " : "") + `10-min score ${s10} (${b10.band}) — document interventions and consider ongoing critical care needs.`;
+    }
+  }
+}
+
+function setupApgar(){
+  apgarRender("apgar-1","a1");
+  apgarRender("apgar-5","a5");
+  apgarRender("apgar-10","a10");
+
+  const show10Sel = el("apgarShow10");
+  const wrap10 = el("apgar10Wrap");
+  if(show10Sel && wrap10){
+    show10Sel.addEventListener("change", () => {
+      const on = show10Sel.value === "yes";
+      wrap10.style.display = on ? "" : "none";
+      calcApgar();
+    });
+  }
+
+  const copyBtn = el("apgarCopyBtn");
+  if(copyBtn){
+    copyBtn.addEventListener("click", async () => {
+      const show10 = el("apgarShow10")?.value === "yes";
+      const s1 = apgarTotal("a1");
+      const s5 = apgarTotal("a5");
+      const s10 = show10 ? apgarTotal("a10") : null;
+      const resus = [];
+if(el("apgarPPV")?.checked) resus.push("PPV");
+if(el("apgarCC")?.checked) resus.push("Chest compressions");
+if(el("apgarAdr")?.checked) resus.push("Adrenaline");
+
+const resusTxt = resus.length ? ` | Resus: ${resus.join(", ")}` : " | Resus: none recorded";
+
+const txt = `APGAR: 1min ${s1}, 5min ${s5}${s10!=null ? `, 10min ${s10}` : ""}${resusTxt}`;
+      try{
+        await navigator.clipboard.writeText(txt);
+        copyBtn.textContent = "Copied ✓";
+        setTimeout(()=>copyBtn.textContent="Copy summary", 1000);
+      }catch{
+        // fallback
+        alert(txt);
+      }
+    });
+  }
+
+["apgarPPV","apgarCC","apgarAdr"].forEach(id=>{
+  el(id)?.addEventListener("change", calcApgar);
+});
+
+  calcApgar();
+}
+
+setupApgar();
 </script>
 </body>
 </html>
