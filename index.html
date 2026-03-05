@@ -46,9 +46,13 @@
     .foot { color: #667085; font-size: 12px; margin-top: 10px; line-height:1.3; }
     .small { font-size: 13px; color:#475467; line-height:1.35; }
     .divider { height:1px; background:#eaecf0; margin: 10px 0; }
+    .scaleWarn { color: #b45309; font-weight: 800; }
 
     .two { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 760px){ .two { grid-template-columns: 1fr; } .topbar { flex-direction:column; align-items:stretch; } }
+    @media (max-width: 760px){
+      .two { grid-template-columns: 1fr; }
+      .topbar { flex-direction:column; align-items:stretch; }
+    }
 
     .helpbtn {
       width: 22px; height: 22px; border-radius: 999px;
@@ -83,11 +87,10 @@
       font-weight: 750;
       cursor:pointer;
       user-select:none;
-      justify-content:flex-start;
     }
-    .pill input { width:auto; }
+    .pill input{ width:auto; }
 
-    /* --- Ballard / APGAR tap-cards --- */
+    /* --- Tap-cards --- */
     .cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     @media (max-width: 760px){ .cards { grid-template-columns: 1fr; } }
 
@@ -114,23 +117,25 @@
     .itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
     .smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
 
-    /* Ballard neuro mini-icons (inline SVG) */
-    .thumbsvg{
-      width: 78px;
-      height: 52px;
-      border-radius: 12px;
+    /* Ballard maneuver illustration box (the “beautiful” SVGs) */
+    .maneuverBox{
+      margin: 8px 0 10px;
+      padding: 10px;
+      border-radius: 14px;
       border: 1px solid #eaecf0;
-      background: #fff;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex: 0 0 auto;
+      background: #f8fafc;
     }
-    .thumbsvg svg{ width: 72px; height: 44px; }
-    .cardopt .top { align-items: center; }
-    .cardopt .leftside { display:flex; gap:10px; align-items:center; }
-
-    .scaleWarn { color: #b45309; font-weight: 800; }
+    .maneuverBox .cap{
+      font-size: 12px;
+      color:#475467;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .maneuverBox svg{
+      width: 100%;
+      height: auto;
+      display:block;
+    }
   </style>
 </head>
 
@@ -195,8 +200,8 @@
               <button id="m4" type="button">Totals</button>
             </div>
             <div class="helpbox" id="helpFluidsBox">
-              Use <b>mL/kg/day</b> for routine daily totals. Use <b>mL/kg/hour</b> when your protocol prescribes an hourly TFI (e.g., hypernatremic dehydration).<br/>
-              Mode tips: <b>Totals</b> lets you enter EBM/day and IVF/day directly and shows “Actual TFI”.
+              Use <b>mL/kg/day</b> for routine daily totals. Use <b>mL/kg/hour</b> when your protocol prescribes an hourly TFI.
+              <br/>Mode tips: <b>Totals</b> lets you enter EBM/day and IVF/day directly and shows “Actual TFI”.
             </div>
           </div>
 
@@ -414,12 +419,12 @@
             </span>
           </label>
           <div class="helpbox" id="helpGirBox">
-            GIR is in <b>mg/kg/min</b>. You can calculate it from:
+            GIR is in <b>mg/kg/min</b>. Calculate from:
             <ul style="margin:8px 0 0 18px; padding:0;">
-              <li><b>mL/hr + dextrose %</b> (most common on IV pumps)</li>
-              <li><b>mL/kg/day + dextrose %</b> (useful if you’re thinking in daily totals)</li>
+              <li><b>mL/hr + dextrose %</b></li>
+              <li><b>mL/kg/day + dextrose %</b></li>
+              <li><b>Target GIR</b> (to get required mL/hr)</li>
             </ul>
-            Formula references are standard: GIR depends on infusion rate, dextrose concentration, weight.
           </div>
         </div>
 
@@ -449,7 +454,7 @@
             <button id="g3" type="button">Target GIR</button>
           </div>
           <div class="helpbox" id="helpGirModeBox">
-            <b>Rate</b>: enter pump rate in mL/hr. <b>mL/kg/day</b>: enter daily fluid per kg. <b>Target</b>: enter desired GIR to get required rate.
+            <b>Rate</b>: enter pump rate in mL/hr. <b>mL/kg/day</b>: daily fluid per kg. <b>Target</b>: desired GIR → required rate.
           </div>
         </div>
 
@@ -467,7 +472,7 @@
           <label>Target GIR <span class="unit">mg/kg/min</span></label>
           <input id="girTarget" inputmode="decimal" placeholder="e.g. 6" />
           <div class="small" style="margin-top:6px">
-            Typical targets often used: term ~4–6, preterm ~6–8 (protocols vary).
+            Typical targets vary by unit/protocol.
           </div>
         </div>
       </div>
@@ -493,8 +498,7 @@
             </span>
           </label>
           <div class="helpbox" id="helpMaintBox">
-            Standard paediatric maintenance is often calculated using Holliday–Segar (100/50/20 mL/kg/day) or 4-2-1 mL/kg/hr.
-            WHO Pocket Book discusses IV maintenance fluids and choice of isotonic solutions + glucose where appropriate.
+            Standard paediatric maintenance can be estimated using Holliday–Segar (100/50/20 mL/kg/day) or 4-2-1 mL/kg/hr.
           </div>
         </div>
 
@@ -530,18 +534,18 @@
             <option value="1.5">Increase (x1.5)</option>
           </select>
           <div class="helpbox" id="helpMaintAdjBox">
-            Use this only if your senior/protocol advises (e.g., cardiac/renal restriction, extra losses). It simply scales the calculated maintenance.
+            Use only if your senior/protocol advises. This simply scales the calculated maintenance.
           </div>
         </div>
 
         <div class="row">
           <label>2/3 maintenance (optional)</label>
-          <label class="pill">
+          <label class="pill" style="justify-content:flex-start;">
             <input type="checkbox" id="mfTwoThirds" />
             Use ⅔ maintenance
           </label>
           <div class="small" style="margin-top:4px">
-            Commonly used in some “unwell child” scenarios per local practice — only use if your protocol/senior advises.
+            Only use if your protocol/senior advises.
           </div>
         </div>
       </div>
@@ -551,10 +555,6 @@
         <div class="rrow"><span>Maintenance per day</span><span id="mfDayOut" class="bold">—</span></div>
         <div class="rrow"><span>Maintenance per hour</span><span id="mfHrOut" class="bold">—</span></div>
         <div class="rrow"><span>Scaling applied</span><span id="mfScaleOut" class="bold">—</span></div>
-        <div class="divider"></div>
-        <div class="small">
-          Tip: For IV maintenance, WHO commonly recommends isotonic fluids (e.g., RL/NS) with glucose where needed; always match to electrolytes and clinical state.
-        </div>
         <div class="warn" id="mfWarn"></div>
         <div class="foot">Clinical support only — assess dehydration/shock/ongoing losses separately.</div>
       </div>
@@ -572,7 +572,7 @@
           </label>
           <div class="helpbox" id="helpApgarBox">
             Score at <b>1 minute</b> and <b>5 minutes</b> (optional <b>10 minutes</b>).
-            Tap the descriptor that best fits. The total is the sum of 5 signs (0–10).
+            Tap the descriptor that best fits. Total is the sum of 5 signs (0–10).
           </div>
         </div>
 
@@ -646,26 +646,18 @@
           Copy summary
         </button>
 
-        <div class="foot">Clinical support only — APGAR describes condition, it does not diagnose cause.</div>
+        <div class="foot">Clinical support only — APGAR describes condition; it does not diagnose cause.</div>
       </div>
     </section>
-
   </div>
 
 <script>
   // ===================== PWA SERVICE WORKER =====================
-// Bump this number whenever you update the service worker
-const SW_VER = "12";
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`)
-    .then(reg => {
-      console.log("Service worker registered:", reg.scope);
-    })
-    .catch(err => {
-      console.log("Service worker registration failed:", err);
-    });
-}
+  // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
+  const SW_VER = "13";  // <-- bump this if you change service-worker.js
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
+  }
 
   // ===================== NAVIGATION =====================
   const calcSelect = document.getElementById("calcSelect");
@@ -742,7 +734,7 @@ if ("serviceWorker" in navigator) {
     return d > 0 ? "ABOVE" : "BELOW";
   }
 
-  // ===================== FLUIDS CALCULATOR =====================
+  // ===================== FLUIDS =====================
   let mode = "EBM"; // EBM, IVFRATE, IVFDAY, TOTALS
   const m1 = el("m1"), m2 = el("m2"), m3 = el("m3"), m4 = el("m4");
   const ebmRow = el("ebmRow");
@@ -783,7 +775,7 @@ if ("serviceWorker" in navigator) {
   function calcFluids(){
     const wG = numOrNull(el("weightG").value);
     const tfiVal = numOrNull(el("tfi").value);
-    const tfiUnit = el("tfiUnit").value; // "day" or "hour"
+    const tfiUnit = el("tfiUnit").value;
     const h = numOrNull(el("freqH").value);
     const warn = el("warn");
     warn.textContent = "";
@@ -864,7 +856,144 @@ if ("serviceWorker" in navigator) {
   }
   calcFluids();
 
-  // ===================== BALLARD (TAP-CARDS, STAND-ALONE) =====================
+  // ===================== BALLARD (maneuver SVGs, NOT stick-figure thumbs) =====================
+  function ballardManeuverSvg(type){
+    const stroke = "#111827";
+    const faint = "#e5e7eb";
+    const mid = "#9ca3af";
+    const accent = "#0ea5e9";
+
+    const wrap = (inner) => `
+      <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ballard maneuver illustration">
+        <rect x="10" y="10" width="700" height="400" rx="24" fill="#ffffff" stroke="${faint}" stroke-width="3"/>
+        ${inner}
+      </svg>
+    `;
+
+    if(type==="posture"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Posture (observe at rest)</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Look at resting flexion of arms/legs.</text>
+
+        <ellipse cx="210" cy="230" rx="110" ry="135" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="210" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <path d="M160 205 Q120 230 120 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M260 205 Q300 230 300 275" stroke="${stroke}" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+        <path d="M170 300 Q160 340 200 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M250 300 Q260 340 220 350" stroke="${accent}" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+        <text x="410" y="200" font-size="18" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="700">Tip:</text>
+        <text x="410" y="230" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more flexion.</text>
+        <text x="410" y="255" font-size="16" font-family="system-ui, -apple-system" fill="#475467">Very preterm → more extension.</text>
+
+        <line x1="360" y1="215" x2="310" y2="215" stroke="${mid}" stroke-width="3"/>
+        <circle cx="310" cy="215" r="5" fill="${mid}"/>
+      `);
+    }
+
+    if(type==="square_window"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Square window (wrist)</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex hand toward forearm and estimate the angle.</text>
+
+        <rect x="80" y="205" width="320" height="70" rx="35" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="410" cy="240" r="12" fill="${stroke}"/>
+
+        <path d="M410 240 L520 140" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
+        <path d="M410 240 L540 240" stroke="${accent}" stroke-width="10" stroke-linecap="round"/>
+        <path d="M410 240 L520 330" stroke="${mid}" stroke-width="8" stroke-linecap="round"/>
+
+        <path d="M450 240 A40 40 0 0 1 420 200" fill="none" stroke="${accent}" stroke-width="6"/>
+        <text x="455" y="205" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
+
+        <text x="80" y="330" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (toward 0°).</text>
+      `);
+    }
+
+    if(type==="arm_recoil"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Arm recoil</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Extend the arm, release, then observe recoil.</text>
+
+        <ellipse cx="200" cy="250" rx="120" ry="130" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="200" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <line x1="270" y1="230" x2="410" y2="230" stroke="${mid}" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="270" cy="230" r="10" fill="${stroke}"/>
+
+        <path d="M270 230 Q340 190 340 150" stroke="${accent}" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+        <path d="M390 210 l20 20 l-20 20" fill="none" stroke="${mid}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="430" y="235" font-size="16" font-family="system-ui, -apple-system" fill="#475467">extend</text>
+
+        <path d="M330 170 l-20 -20 l20 -20" fill="none" stroke="${accent}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="360" y="170" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">recoil</text>
+
+        <text x="420" y="300" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → stronger recoil (more flexion).</text>
+      `);
+    }
+
+    if(type==="popliteal"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Popliteal angle</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Flex thigh to abdomen, extend lower leg, estimate angle.</text>
+
+        <line x1="120" y1="260" x2="320" y2="260" stroke="${stroke}" stroke-width="14" stroke-linecap="round"/>
+        <circle cx="320" cy="260" r="12" fill="${stroke}"/>
+
+        <line x1="320" y1="260" x2="460" y2="150" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
+
+        <path d="M360 260 A60 60 0 0 0 332 212" fill="none" stroke="${accent}" stroke-width="8"/>
+        <text x="392" y="235" font-size="16" font-family="system-ui, -apple-system" fill="${accent}" font-weight="800">angle</text>
+
+        <line x1="120" y1="310" x2="600" y2="310" stroke="${faint}" stroke-width="6"/>
+        <text x="120" y="345" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → smaller angle (more resistance).</text>
+      `);
+    }
+
+    if(type==="scarf"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Scarf sign</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Pull arm across chest; note elbow position vs midline.</text>
+
+        <ellipse cx="230" cy="255" rx="130" ry="145" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="230" cy="145" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <line x1="230" y1="125" x2="230" y2="380" stroke="${mid}" stroke-width="4" stroke-dasharray="8 10"/>
+        <text x="245" y="138" font-size="14" font-family="system-ui, -apple-system" fill="${mid}">midline</text>
+
+        <line x1="315" y1="240" x2="170" y2="280" stroke="${accent}" stroke-width="14" stroke-linecap="round"/>
+        <circle cx="170" cy="280" r="10" fill="${accent}"/>
+
+        <text x="410" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">elbow position</text>
+        <line x1="390" y1="255" x2="185" y2="285" stroke="${faint}" stroke-width="3"/>
+      `);
+    }
+
+    if(type==="heel_to_ear"){
+      return wrap(`
+        <text x="40" y="70" font-size="26" font-family="system-ui, -apple-system" fill="${stroke}" font-weight="800">Heel-to-ear</text>
+        <text x="40" y="100" font-size="18" font-family="system-ui, -apple-system" fill="#475467">Bring heel toward ear without lifting pelvis; assess resistance.</text>
+
+        <circle cx="170" cy="160" r="45" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+        <circle cx="205" cy="160" r="10" fill="${stroke}"/>
+
+        <rect x="160" y="210" width="220" height="150" rx="70" fill="#f3f4f6" stroke="${faint}" stroke-width="3"/>
+
+        <path d="M360 340 Q300 270 250 220" stroke="${accent}" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <circle cx="250" cy="220" r="10" fill="${accent}"/>
+
+        <path d="M240 215 l-22 -12 l6 24 z" fill="${accent}"/>
+
+        <text x="430" y="250" font-size="16" font-family="system-ui, -apple-system" fill="#475467">More maturity → more resistance → heel farther away.</text>
+      `);
+    }
+
+    return wrap(`<text x="40" y="70" font-size="24" font-family="system-ui" fill="${stroke}">Maneuver</text>`);
+  }
+
   const ballardNeuroConfig = [
     { key: "posture", name: "Posture", hint: "Observe resting tone/flexion at rest.",
       options: [
@@ -1005,7 +1134,7 @@ if ("serviceWorker" in navigator) {
     return null;
   }
 
-  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, iconType=null){
+  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, showManeuver=false, maneuverType=null){
     const block = document.createElement("div");
     block.className = "itemblock";
     block.dataset.groupId = groupId;
@@ -1013,12 +1142,17 @@ if ("serviceWorker" in navigator) {
 
     const head = document.createElement("div");
     head.className = "itemhead";
-
     const h4 = document.createElement("div");
     h4.innerHTML = `<h4>${title}</h4>${hint ? `<div class="smallhint">${hint}</div>` : ""}`;
-
     head.appendChild(h4);
     block.appendChild(head);
+
+    if(showManeuver && maneuverType){
+      const m = document.createElement("div");
+      m.className = "maneuverBox";
+      m.innerHTML = `<div class="cap">How to do it (quick visual)</div>${ballardManeuverSvg(maneuverType)}`;
+      block.appendChild(m);
+    }
 
     const cards = document.createElement("div");
     cards.className = "cards";
@@ -1030,17 +1164,11 @@ if ("serviceWorker" in navigator) {
       c.setAttribute("tabindex","0");
       c.dataset.score = String(opt.score);
 
-      // IMPORTANT: this is the maneuver SVG renderer (no external images)
-      const iconHtml = iconType ? `<div class="thumbsvg">${ballardIconSvg(iconType, opt.score)}</div>` : "";
-
       c.innerHTML = `
         <div class="top">
-          <div class="leftside">
-            ${iconHtml}
-            <div>
-              <div class="label">${opt.label}</div>
-              ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
-            </div>
+          <div>
+            <div class="label">${opt.label}</div>
+            ${opt.sub ? `<div class="sub">${opt.sub}</div>` : ""}
           </div>
           <div class="score">${opt.score}</div>
         </div>
@@ -1077,19 +1205,20 @@ if ("serviceWorker" in navigator) {
     neuroHost.innerHTML = "";
     physHost.innerHTML = "";
 
-    // Neuro items get maneuver SVG icons (iconType = item.key)
+    // Neuromuscular: show maneuver SVG above the choices
     ballardNeuroConfig.forEach(item => {
-      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, item.key);
+      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, true, item.key);
     });
 
-    // Physical items no icons
+    // Physical: no maneuver SVG
     ballardPhysicalConfigBase.forEach(item => {
-      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0);
+      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0, false, null);
     });
 
+    // Sex-specific genitals
     const sex = el("ballardSex")?.value ?? "male";
     const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
-    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0);
+    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0, false, null);
 
     calcBallard();
   }
@@ -1115,176 +1244,36 @@ if ("serviceWorker" in navigator) {
 
   el("ballardSex")?.addEventListener("change", renderBallard);
   el("ballardAgeDays")?.addEventListener("input", calcBallard);
-
-  // --------------------- Maneuver SVGs (the "beautiful" ones) ---------------------
-  // NOTE: There is ONLY ONE ballardIconSvg() in this file (to prevent old versions being used).
-  function ballardIconSvg(type, score){
-    const norm = (v, min, max) => {
-      const x = (v - min) / (max - min);
-      return Math.max(0, Math.min(1, x));
-    };
-    const stroke = "#1f2937";
-    const thick = 3.0;
-
-    const joint = (x, y, len1, a1, len2, a2, sw=thick) => {
-      const rad = d => d * Math.PI/180;
-      const x1 = x + len1*Math.cos(rad(a1));
-      const y1 = y + len1*Math.sin(rad(a1));
-      const x2 = x1 + len2*Math.cos(rad(a2));
-      const y2 = y1 + len2*Math.sin(rad(a2));
-      return `
-        <circle cx="${x}" cy="${y}" r="2.4" fill="${stroke}"/>
-        <line x1="${x}" y1="${y}" x2="${x1}" y2="${y1}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
-        <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>
-      `;
-    };
-
-    const bg = `
-      <rect x="1" y="1" width="70" height="42" rx="10" fill="#ffffff"/>
-      <line x1="10" y1="34" x2="62" y2="34" stroke="#e5e7eb" stroke-width="2"/>
-    `;
-
-    if(type === "square_window"){
-      const t = norm(score, -1, 4);
-      const angle = 95 - t*95;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <line x1="10" y1="26" x2="46" y2="26" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          ${joint(46,26, 0,0, 16, -angle, thick)}
-          <circle cx="46" cy="26" r="3.2" fill="${stroke}"/>
-        </svg>
-      `;
-    }
-    if(type === "arm_recoil"){
-      const t = norm(score, 0, 4);
-      const elbow = 18 + t*18;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <line x1="14" y1="30" x2="30" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          ${joint(30,22, 16, 0, 16, 180-elbow, thick)}
-        </svg>
-      `;
-    }
-    if(type === "popliteal"){
-      const t = norm(score, -1, 5);
-      const ang = 175 - t*105;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <line x1="18" y1="18" x2="38" y2="18" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          ${joint(38,18, 0,0, 18, ang, thick)}
-          <circle cx="38" cy="18" r="3.2" fill="${stroke}"/>
-        </svg>
-      `;
-    }
-    if(type === "scarf"){
-      const t = norm(score, 0, 4);
-      const elbowX = 46 - t*18;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <line x1="36" y1="10" x2="36" y2="34" stroke="#e5e7eb" stroke-width="2"/>
-          <circle cx="28" cy="18" r="7" fill="#f3f4f6" stroke="#e5e7eb"/>
-          <line x1="28" y1="18" x2="${elbowX}" y2="22" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          <circle cx="${elbowX}" cy="22" r="3.0" fill="${stroke}"/>
-        </svg>
-      `;
-    }
-    if(type === "heel_to_ear"){
-      const t = norm(score, 0, 4);
-      const heelY = 14 + t*16;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <circle cx="20" cy="14" r="6" fill="#f3f4f6" stroke="#e5e7eb"/>
-          <circle cx="25" cy="14" r="2.4" fill="${stroke}"/>
-          <line x1="46" y1="34" x2="34" y2="${heelY}" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          <circle cx="34" cy="${heelY}" r="3.0" fill="${stroke}"/>
-        </svg>
-      `;
-    }
-    if(type === "posture"){
-      const t = norm(score, 0, 4);
-      const armA = -10 - t*40;
-      const legA = 40 + t*30;
-      return `
-        <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-          ${bg}
-          <line x1="34" y1="16" x2="34" y2="30" stroke="${stroke}" stroke-width="${thick}" stroke-linecap="round"/>
-          <circle cx="34" cy="12" r="5.2" fill="#f3f4f6" stroke="#e5e7eb"/>
-          ${joint(34,18, 12, armA, 10, armA-20, thick)}
-          ${joint(34,30, 12, legA, 10, legA+15, thick)}
-        </svg>
-      `;
-    }
-
-    return `
-      <svg viewBox="0 0 72 44" xmlns="http://www.w3.org/2000/svg">
-        ${bg}
-        <text x="12" y="26" font-size="12" fill="#667085">N/A</text>
-      </svg>
-    `;
-  }
-
   renderBallard();
 
-  // ===================== THOMPSON SCORE =====================
+  // ===================== THOMPSON =====================
   const thompsonConfig = [
     { key: "tone", name: "Tone", options: [
-      { label: "Normal", score: 0 },
-      { label: "Hypertonia", score: 1 },
-      { label: "Hypotonia", score: 2 },
-      { label: "Flaccid", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Hypertonia", score: 1 }, { label: "Hypotonia", score: 2 }, { label: "Flaccid", score: 3 },
     ]},
     { key: "loc", name: "Level of consciousness", options: [
-      { label: "Normal / alert", score: 0 },
-      { label: "Hyperalert / irritable", score: 1 },
-      { label: "Lethargic", score: 2 },
-      { label: "Coma", score: 3 },
+      { label: "Normal / alert", score: 0 }, { label: "Hyperalert / irritable", score: 1 }, { label: "Lethargic", score: 2 }, { label: "Coma", score: 3 },
     ]},
     { key: "seiz", name: "Seizures", options: [
-      { label: "None", score: 0 },
-      { label: "Occasional", score: 1 },
-      { label: "Frequent", score: 2 },
-      { label: "Status epilepticus", score: 3 },
+      { label: "None", score: 0 }, { label: "Occasional", score: 1 }, { label: "Frequent", score: 2 }, { label: "Status epilepticus", score: 3 },
     ]},
     { key: "post", name: "Posture", options: [
-      { label: "Normal", score: 0 },
-      { label: "Mild distal flexion", score: 1 },
-      { label: "Strong distal flexion / decorticate", score: 2 },
-      { label: "Decerebrate posture", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Mild distal flexion", score: 1 }, { label: "Strong distal flexion / decorticate", score: 2 }, { label: "Decerebrate posture", score: 3 },
     ]},
     { key: "moro", name: "Moro reflex", options: [
-      { label: "Normal", score: 0 },
-      { label: "Partial", score: 1 },
-      { label: "Weak", score: 2 },
-      { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Partial", score: 1 }, { label: "Weak", score: 2 }, { label: "Absent", score: 3 },
     ]},
     { key: "grasp", name: "Grasp", options: [
-      { label: "Normal", score: 0 },
-      { label: "Poor", score: 1 },
-      { label: "Very weak", score: 2 },
-      { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
     ]},
     { key: "suck", name: "Suck", options: [
-      { label: "Normal", score: 0 },
-      { label: "Poor", score: 1 },
-      { label: "Very weak", score: 2 },
-      { label: "Absent", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Poor", score: 1 }, { label: "Very weak", score: 2 }, { label: "Absent", score: 3 },
     ]},
     { key: "resp", name: "Respiration", options: [
-      { label: "Normal", score: 0 },
-      { label: "Hyperventilation", score: 1 },
-      { label: "Periodic / irregular", score: 2 },
-      { label: "Apnoea / ventilated", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Hyperventilation", score: 1 }, { label: "Periodic / irregular", score: 2 }, { label: "Apnoea / ventilated", score: 3 },
     ]},
     { key: "font", name: "Fontanelle", options: [
-      { label: "Normal", score: 0 },
-      { label: "Full", score: 1 },
-      { label: "Tense", score: 2 },
-      { label: "Bulging", score: 3 },
+      { label: "Normal", score: 0 }, { label: "Full", score: 1 }, { label: "Tense", score: 2 }, { label: "Bulging", score: 3 },
     ]},
   ];
 
@@ -1349,7 +1338,7 @@ if ("serviceWorker" in navigator) {
 
   renderThompson();
 
-  // ===================== JAUNDICE (PHOTO/EXCHANGE) =====================
+  // ===================== JAUNDICE =====================
   const photoLines = {
     g38:   [[6,80],[12,120],[24,170],[36,210],[48,240],[60,265],[72,285],[84,300],[96,310],[108,315],[120,320]],
     g35:   [[6,80],[12,110],[24,160],[36,200],[48,225],[60,245],[72,265],[84,275],[96,285],[108,290],[120,292]],
@@ -1385,11 +1374,8 @@ if ("serviceWorker" in navigator) {
     el("jnPhotoLine").textContent = (photo==null) ? "—" : `${Math.round(photo)} µmol/L`;
     el("jnExLine").textContent    = (exch==null)  ? "—" : `${Math.round(exch)} µmol/L`;
 
-    const vPhoto = compareToLine(tsb, photo, tol);
-    const vEx    = compareToLine(tsb, exch, tol);
-
-    el("jnVsPhoto").textContent = vPhoto;
-    el("jnVsEx").textContent    = vEx;
+    el("jnVsPhoto").textContent = compareToLine(tsb, photo, tol);
+    el("jnVsEx").textContent    = compareToLine(tsb, exch, tol);
 
     const advice = el("jnAdvice");
     const warn = el("jnWarn");
@@ -1403,31 +1389,27 @@ if ("serviceWorker" in navigator) {
 
     if(exch!=null && tsb >= exch){
       advice.textContent = "Above exchange line: urgent senior review + prepare for exchange transfusion and intensive phototherapy.";
-      warn.textContent = "Confirm causes (haemolysis/sepsis), ensure temperature, glucose, hydration; follow local pathway.";
+      warn.textContent = "Follow local pathway and investigate cause (e.g., haemolysis/sepsis).";
       return;
     }
 
     if(photo!=null && tsb >= photo){
-      advice.textContent = "At/above phototherapy line: start intensive phototherapy now and recheck TSB per your local protocol.";
+      advice.textContent = "At/above phototherapy line: start intensive phototherapy and recheck TSB per your local protocol.";
       return;
     }
 
     if(photo!=null){
       const diff = photo - tsb;
-      if(diff <= 20){
-        advice.textContent = "Within 0–20 µmol/L below phototherapy line: repeat TSB soon; consider early phototherapy if trending up/risk factors.";
-      } else if(diff <= 50){
-        advice.textContent = "21–50 µmol/L below phototherapy line: repeat TSB within ~12–24h (or sooner if risk factors).";
-      } else {
-        advice.textContent = ">50 µmol/L below phototherapy line: clinical monitoring and repeat TSB per context.";
-      }
+      if(diff <= 20) advice.textContent = "Within 0–20 µmol/L below phototherapy line: repeat TSB soon; consider early phototherapy if rising/risk factors.";
+      else if(diff <= 50) advice.textContent = "21–50 µmol/L below phototherapy line: repeat TSB within ~12–24h (or sooner if risk factors).";
+      else advice.textContent = ">50 µmol/L below phototherapy line: clinical monitoring + repeat TSB per context.";
     } else {
       warn.textContent = "Could not compute line for this age/group.";
     }
   }
   calcJaundice();
 
-  // ===================== GIR CALCULATOR =====================
+  // ===================== GIR =====================
   let gMode = "RATE"; // RATE, MLKD, TARGET
   const g1 = el("g1"), g2 = el("g2"), g3 = el("g3");
   const girRateRow = el("girRateRow");
@@ -1457,7 +1439,7 @@ if ("serviceWorker" in navigator) {
     warn.textContent = "";
 
     const w = numOrNull(el("girWkg").value);
-    const dexPct = numOrNull(el("girDex").value); // e.g. 10 for D10
+    const dexPct = numOrNull(el("girDex").value);
     const rateMlHr = numOrNull(el("girRate").value);
     const mlkgday = numOrNull(el("girMlkd").value);
     const target = numOrNull(el("girTarget").value);
@@ -1477,18 +1459,16 @@ if ("serviceWorker" in navigator) {
       return;
     }
 
-    // Convert % dextrose to g/dL: D10 = 10 g/100 mL = 10 g/dL.
     const gPerDl = dexPct;
 
-    let gir = null;         // mg/kg/min
-    let equivMlkd = null;   // mL/kg/day
-    let reqRate = null;     // mL/hr to hit target GIR
+    let gir = null;
+    let equivMlkd = null;
+    let reqRate = null;
 
     if(gMode==="RATE"){
       if(rateMlHr==null || rateMlHr<0){
         warn.textContent = "Enter infusion rate (mL/hr).";
       } else {
-        // GIR = rate(mL/hr) * g/dL * 1000 / (kg * 6000)
         gir = (rateMlHr * gPerDl * 1000) / (w * 6000);
         equivMlkd = (rateMlHr * 24) / w;
       }
@@ -1497,21 +1477,17 @@ if ("serviceWorker" in navigator) {
         warn.textContent = "Enter mL/kg/day.";
       } else {
         equivMlkd = mlkgday;
-        // GIR = (mL/kg/day * %D) / 144
         gir = (mlkgday * dexPct) / 144;
       }
     } else if(gMode==="TARGET"){
       if(target==null || target<0){
         warn.textContent = "Enter target GIR (mg/kg/min).";
+      } else if(gPerDl <= 0){
+        warn.textContent = "Dextrose % must be > 0 to compute required rate.";
       } else {
-        if(gPerDl <= 0){
-          warn.textContent = "Dextrose % must be > 0 to compute required rate.";
-        } else {
-          // rate(mL/hr) = GIR * kg * 6 / (g/dL)
-          reqRate = (target * w * 6) / gPerDl;
-          equivMlkd = (reqRate * 24) / w;
-          gir = target;
-        }
+        reqRate = (target * w * 6) / gPerDl;
+        equivMlkd = (reqRate * 24) / w;
+        gir = target;
       }
     }
 
@@ -1519,11 +1495,11 @@ if ("serviceWorker" in navigator) {
     el("girMlkdOut").textContent = (equivMlkd==null) ? "—" : `${fmt(equivMlkd,1)} mL/kg/day`;
     el("girReqRateOut").textContent = (reqRate==null) ? "—" : `${fmt(reqRate,2)} mL/hr`;
 
-    if(dexPct>25) warn.textContent = warn.textContent || "High dextrose concentration entered — confirm solution.";
+    if(dexPct>25 && !warn.textContent) warn.textContent = "High dextrose concentration entered — confirm solution.";
   }
   calcGir();
 
-  // ===================== MAINTENANCE FLUIDS =====================
+  // ===================== MAINTENANCE =====================
   ["mfWkg","mfMethod","mfAdj"].map(el).forEach(x => x && x.addEventListener("input", calcMaint));
   el("mfMethod").addEventListener("change", calcMaint);
   el("mfAdj").addEventListener("change", calcMaint);
@@ -1586,53 +1562,33 @@ if ("serviceWorker" in navigator) {
   }
   calcMaint();
 
-  // ===================== APGAR (TAP-CARDS) =====================
+  // ===================== APGAR =====================
   const apgarItems = [
-    {
-      key: "appearance",
-      name: "Appearance (colour)",
-      options: [
-        { label: "Blue/pale all over", score: 0 },
-        { label: "Pink body, blue extremities", score: 1 },
-        { label: "Completely pink", score: 2 },
-      ],
-    },
-    {
-      key: "pulse",
-      name: "Pulse (heart rate)",
-      options: [
-        { label: "Absent", score: 0 },
-        { label: "< 100 bpm", score: 1 },
-        { label: "≥ 100 bpm", score: 2 },
-      ],
-    },
-    {
-      key: "grimace",
-      name: "Grimace (reflex irritability)",
-      options: [
-        { label: "No response", score: 0 },
-        { label: "Grimace/weak response", score: 1 },
-        { label: "Cry/cough/sneeze/pulls away", score: 2 },
-      ],
-    },
-    {
-      key: "activity",
-      name: "Activity (muscle tone)",
-      options: [
-        { label: "Limp", score: 0 },
-        { label: "Some flexion", score: 1 },
-        { label: "Active movement", score: 2 },
-      ],
-    },
-    {
-      key: "respiration",
-      name: "Respiration",
-      options: [
-        { label: "Absent", score: 0 },
-        { label: "Slow/irregular; weak cry", score: 1 },
-        { label: "Good breathing; strong cry", score: 2 },
-      ],
-    },
+    { key: "appearance", name: "Appearance (colour)", options: [
+      { label: "Blue/pale all over", score: 0 },
+      { label: "Pink body, blue extremities", score: 1 },
+      { label: "Completely pink", score: 2 },
+    ]},
+    { key: "pulse", name: "Pulse (heart rate)", options: [
+      { label: "Absent", score: 0 },
+      { label: "< 100 bpm", score: 1 },
+      { label: "≥ 100 bpm", score: 2 },
+    ]},
+    { key: "grimace", name: "Grimace (reflex irritability)", options: [
+      { label: "No response", score: 0 },
+      { label: "Grimace/weak response", score: 1 },
+      { label: "Cry/cough/sneeze/pulls away", score: 2 },
+    ]},
+    { key: "activity", name: "Activity (muscle tone)", options: [
+      { label: "Limp", score: 0 },
+      { label: "Some flexion", score: 1 },
+      { label: "Active movement", score: 2 },
+    ]},
+    { key: "respiration", name: "Respiration", options: [
+      { label: "Absent", score: 0 },
+      { label: "Slow/irregular; weak cry", score: 1 },
+      { label: "Good breathing; strong cry", score: 2 },
+    ]},
   ];
 
   function apgarRender(hostId, prefix){
@@ -1663,11 +1619,7 @@ if ("serviceWorker" in navigator) {
 
         c.innerHTML = `
           <div class="top">
-            <div class="leftside">
-              <div>
-                <div class="label">${opt.label}</div>
-              </div>
-            </div>
+            <div><div class="label">${opt.label}</div></div>
             <div class="score">${opt.score}</div>
           </div>
         `;
@@ -1703,9 +1655,9 @@ if ("serviceWorker" in navigator) {
   }
 
   function apgarBand(score){
-    if(score <= 3) return { band: "Severely low" };
-    if(score <= 6) return { band: "Moderately low" };
-    return { band: "Reassuring" };
+    if(score <= 3) return { band: "Severely low", cls: "warn" };
+    if(score <= 6) return { band: "Moderately low", cls: "warn" };
+    return { band: "Reassuring", cls: "ok" };
   }
 
   function calcApgar(){
@@ -1724,13 +1676,15 @@ if ("serviceWorker" in navigator) {
     interp.textContent = "";
     warn.textContent = "";
 
-    const anyResus = !!(el("apgarPPV")?.checked || el("apgarCC")?.checked || el("apgarAdr")?.checked);
+    const anyResus =
+      el("apgarPPV")?.checked || el("apgarCC")?.checked || el("apgarAdr")?.checked;
+
     const b5 = apgarBand(s5);
 
     if(s5 >= 7){
       interp.textContent = `5-min score is ${s5} (${b5.band}). Continue routine care + monitoring per context.`;
       if(anyResus){
-        interp.textContent += " Resuscitation given — document timeline and interventions.";
+        interp.textContent += " (Resuscitation given — document timeline and interventions.)";
       }
     } else {
       warn.textContent = `5-min score is ${s5} (${b5.band}). Ensure senior review and ongoing resuscitation/support per NRP/local protocol.`;
@@ -1740,11 +1694,9 @@ if ("serviceWorker" in navigator) {
       warn.textContent += (warn.textContent ? " " : "") + "Score not improving from 1 to 5 minutes — reassess ventilation/HR and causes.";
     }
 
-    if(s10 != null){
+    if(s10 != null && s10 < 7){
       const b10 = apgarBand(s10);
-      if(s10 < 7){
-        warn.textContent += (warn.textContent ? " " : "") + `10-min score ${s10} (${b10.band}) — document interventions and consider ongoing critical care needs.`;
-      }
+      warn.textContent += (warn.textContent ? " " : "") + `10-min score ${s10} (${b10.band}) — document interventions and consider ongoing critical care needs.`;
     }
   }
 
@@ -1795,7 +1747,6 @@ if ("serviceWorker" in navigator) {
 
     calcApgar();
   }
-
   setupApgar();
 </script>
 </body>
