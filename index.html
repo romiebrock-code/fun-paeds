@@ -723,7 +723,7 @@
 <script>
   // ===================== PWA SERVICE WORKER =====================
   // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
-  const SW_VER = "16";  // <-- bump this if you change service-worker.js
+  const SW_VER = "17";  // <-- bump this if you change service-worker.js
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -805,7 +805,7 @@
     return d > 0 ? "ABOVE" : "BELOW";
   }
 
-   // ===================== FLUIDS =====================
+  // ===================== FLUIDS =====================
   let fluidMode = "TARGET"; // TARGET, REVERSE
 
   const fm1 = el("fm1");
@@ -827,19 +827,19 @@
   const revIvfDayRow = el("revIvfDayRow");
 
   function setFluidMode(mode){
-  fluidMode = mode;
+    fluidMode = mode;
 
-  fm1.classList.toggle("active", fluidMode==="TARGET");
-  fm2.classList.toggle("active", fluidMode==="REVERSE");
+    fm1.classList.toggle("active", fluidMode === "TARGET");
+    fm2.classList.toggle("active", fluidMode === "REVERSE");
 
-  fluidsTargetCard.style.display = (fluidMode==="TARGET") ? "" : "none";
-  fluidsReverseCard.style.display = (fluidMode==="REVERSE") ? "" : "none";
+    fluidsTargetCard.style.display = (fluidMode === "TARGET") ? "" : "none";
+    fluidsReverseCard.style.display = (fluidMode === "REVERSE") ? "" : "none";
 
-  flTargetBlock.style.display = (fluidMode==="TARGET") ? "" : "none";
-  flReverseBlock.style.display = (fluidMode==="REVERSE") ? "" : "none";
+    flTargetBlock.style.display = (fluidMode === "TARGET") ? "" : "none";
+    flReverseBlock.style.display = (fluidMode === "REVERSE") ? "" : "none";
 
-  calcFluids();
-}
+    calcFluids();
+  }
 
   function updateTargetRows(){
     const mode = targetEbmMode.value;
@@ -857,15 +857,15 @@
     revIvfDayRow.style.display  = (mode === "feed_day" || mode === "day_day") ? "" : "none";
   }
 
-  fm1.onclick = ()=>setFluidMode("TARGET");
-  fm2.onclick = ()=>setFluidMode("REVERSE");
+  fm1.onclick = () => setFluidMode("TARGET");
+  fm2.onclick = () => setFluidMode("REVERSE");
 
-  targetEbmMode.addEventListener("change", ()=>{
+  targetEbmMode.addEventListener("change", () => {
     updateTargetRows();
     calcFluids();
   });
 
-  reverseMode.addEventListener("change", ()=>{
+  reverseMode.addEventListener("change", () => {
     updateReverseRows();
     calcFluids();
   });
@@ -904,11 +904,103 @@
     }
 
     if(feedsPerDay == null){
-      warn.textContent = warn.textContent ? warn.textContent + " Enter valid feed frequency." : "Enter valid feed frequency.";
+      warn.textContent = warn.textContent
+        ? warn.textContent + " Enter valid feed frequency."
+        : "Enter valid feed frequency.";
     }
 
     // ================= TARGET MODE =================
-       if(fluidMode === "TARGET"){
+    if(fluidMode === "TARGET"){
+      const tfiVal = numOrNull(el("tfi").value);
+      const tfiUnit = el("tfiUnit").value;
+
+      const tfiDaily = (tfiVal != null)
+        ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal)
+        : null;
+
+      if(wKg != null && tfiDaily != null){
+        totalTargetDay = wKg * tfiDaily;
+        totalTargetHr = totalTargetDay / 24;
+      }
+
+      if(targetEbmMode.value === "feed"){
+        const v = clamp0(numOrNull(el("targetEbmFeed").value));
+        if(v != null){
+          ebmFeedOut = v;
+          if(feedsPerDay != null){
+            ebmDay = v * feedsPerDay;
+          }
+        }
+      } else {
+        const v = clamp0(numOrNull(el("targetEbmDay").value));
+        if(v != null){
+          ebmDay = v;
+          if(feedsPerDay != null && feedsPerDay > 0){
+            ebmFeedOut = v / feedsPerDay;
+          }
+        }
+      }
+
+      if(totalTargetDay != null){
+        ivfDay = Math.max(0, totalTargetDay - (ebmDay ?? 0));
+        ivfRate = ivfDay / 24;
+
+        if((ebmDay ?? 0) > totalTargetDay){
+          warn.textContent = "EBM exceeds target total — IVF set to 0.";
+        }
+      }
+    }
+
+    // ================= REVERSE MODE =================
+    if(fluidMode === "REVERSE"){
+      const rMode = reverseMode.value;
+
+      if(rMode === "feed_rate" || rMode === "feed_day"){
+        const v = clamp0(numOrNull(el("revEbmFeed").value));
+        if(v != null){
+          ebmFeedOut = v;
+          if(feedsPerDay != null){
+            ebmDay = v * feedsPerDay;
+          }
+        }
+      }
+
+      if(rMode === "day_rate" || rMode === "day_day"){
+        const v = clamp0(numOrNull(el("revEbmDay").value));
+        if(v != null){
+          ebmDay = v;
+          if(feedsPerDay != null && feedsPerDay > 0){
+            ebmFeedOut = v / feedsPerDay;
+          }
+        }
+      }
+
+      if(rMode === "feed_rate" || rMode === "day_rate"){
+        const v = clamp0(numOrNull(el("revIvfRate").value));
+        if(v != null){
+          ivfRate = v;
+          ivfDay = v * 24;
+        }
+      }
+
+      if(rMode === "feed_day" || rMode === "day_day"){
+        const v = clamp0(numOrNull(el("revIvfDay").value));
+        if(v != null){
+          ivfDay = v;
+          ivfRate = v / 24;
+        }
+      }
+
+      deliveredDay = (ebmDay ?? 0) + (ivfDay ?? 0);
+
+      if(wKg != null && wKg > 0){
+        actualTfiDay = deliveredDay / wKg;
+        actualTfiHr = actualTfiDay / 24;
+      }
+    }
+
+    // ================= OUTPUTS =================
+    if(fluidMode === "TARGET"){
       el("flTotal").textContent = totalTargetDay == null ? "—" : `${fmt(totalTargetDay)} mL/day`;
       el("flTotalHr").textContent = totalTargetHr == null ? "—" : `${fmt(totalTargetHr)} mL/hr`;
 
@@ -926,60 +1018,6 @@
       el("flActualTfi").textContent = actualTfiDay == null ? "—" : `${fmt(actualTfiDay)} mL/kg/day`;
       el("flActualTfiHr").textContent = actualTfiHr == null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
     }
-
-    // ================= REVERSE MODE =================
-    if(fluidMode === "REVERSE"){
-      const rMode = reverseMode.value;
-
-      if(rMode === "feed_rate" || rMode === "feed_day"){
-        const v = clamp0(numOrNull(el("revEbmFeed").value) ?? 0);
-        ebmFeedOut = v;
-        if(feedsPerDay != null){
-          ebmDay = v * feedsPerDay;
-        }
-      }
-
-      if(rMode === "day_rate" || rMode === "day_day"){
-        const v = clamp0(numOrNull(el("revEbmDay").value) ?? 0);
-        ebmDay = v;
-        if(feedsPerDay != null && v != null){
-          ebmFeedOut = v / feedsPerDay;
-        }
-      }
-
-      if(rMode === "feed_rate" || rMode === "day_rate"){
-        const v = clamp0(numOrNull(el("revIvfRate").value) ?? 0);
-        ivfRate = v;
-        ivfDay = v * 24;
-      }
-
-      if(rMode === "feed_day" || rMode === "day_day"){
-        const v = clamp0(numOrNull(el("revIvfDay").value) ?? 0);
-        ivfDay = v;
-        ivfRate = v / 24;
-      }
-
-      if(ebmDay != null || ivfDay != null){
-        deliveredDay = (ebmDay ?? 0) + (ivfDay ?? 0);
-      }
-
-      if(wKg != null && wKg > 0 && deliveredDay != null){
-        actualTfiDay = deliveredDay / wKg;
-        actualTfiHr = actualTfiDay / 24;
-      }
-    }
-
-    el("flTotal").textContent = totalTargetDay == null ? "—" : `${fmt(totalTargetDay)} mL/day`;
-    el("flTotalHr").textContent = totalTargetHr == null ? "—" : `${fmt(totalTargetHr)} mL/hr`;
-
-    el("flEbmDay").textContent = ebmDay == null ? "—" : `${fmt(ebmDay)} mL/day`;
-    el("flEbmFeedOut").textContent = ebmFeedOut == null ? "—" : `${fmt(ebmFeedOut)} mL/feed`;
-    el("flIvfDay").textContent = ivfDay == null ? "—" : `${fmt(ivfDay)} mL/day`;
-    el("flIvfRate").textContent = ivfRate == null ? "—" : `${fmt(ivfRate)} mL/hr`;
-
-    el("flDelivered").textContent = deliveredDay == null ? "—" : `${fmt(deliveredDay)} mL/day`;
-    el("flActualTfi").textContent = actualTfiDay == null ? "—" : `${fmt(actualTfiDay)} mL/kg/day`;
-    el("flActualTfiHr").textContent = actualTfiHr == null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
   }
 
   updateTargetRows();
