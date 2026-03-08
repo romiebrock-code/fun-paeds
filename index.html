@@ -150,6 +150,7 @@
           <option value="ballard">Ballard Score</option>
           <option value="thompson">Thompson Score</option>
           <option value="jaundice">Jaundice (Photo/Exchange)</option>
+	  <option value="bind">BIND Score</option>
           <option value="gir">Glucose Infusion Rate (GIR)</option>
           <option value="maint">Maintenance Fluids</option>
           <option value="apgar">APGAR</option>
@@ -408,6 +409,36 @@
       </div>
     </section>
 
+    <!-- ===================== BIND ===================== -->
+<section id="sec-bind" style="display:none">
+  <div class="card">
+    <div class="row">
+      <label>
+        BIND score (bilirubin neurotoxicity)
+        <span class="inline" style="gap:6px; justify-content:flex-end;">
+          <span class="helpbtn" id="helpBindBtn">?</span>
+        </span>
+      </label>
+      <div class="helpbox" id="helpBindBox">
+        BIND describes <b>clinical signs of bilirubin-induced neurologic dysfunction</b>.
+        It does <b>not</b> replace TSB-based treatment thresholds. Use BIND to communicate neuro status and urgency.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="grid" id="bind-items"></div>
+  </div>
+
+  <div class="card results">
+    <h3>Results</h3>
+    <div class="rrow"><span>Total BIND</span><span id="bindTotalOut" class="bold">—</span></div>
+    <div class="rrow"><span>Interpretation</span><span id="bindInterpOut" class="bold">—</span></div>
+    <div id="bindAdvice" class="warn"></div>
+    <div class="foot">Clinical support only — correlate with TSB, GA, risk factors and local jaundice pathway.</div>
+  </div>
+</section>
+
     <!-- ===================== GIR ===================== -->
     <section id="sec-gir" style="display:none">
       <div class="card">
@@ -654,7 +685,7 @@
 <script>
   // ===================== PWA SERVICE WORKER =====================
   // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
-  const SW_VER = "13";  // <-- bump this if you change service-worker.js
+  const SW_VER = "14";  // <-- bump this if you change service-worker.js
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -669,6 +700,7 @@
     gir: document.getElementById("sec-gir"),
     maint: document.getElementById("sec-maint"),
     apgar: document.getElementById("sec-apgar"),
+    bind: document.getElementById("sec-bind"),
   };
   function showSection(key){
     Object.entries(sections).forEach(([k, el]) => el.style.display = (k===key) ? "" : "none");
@@ -697,6 +729,7 @@
   toggleHelp("helpMaintBtn","helpMaintBox");
   toggleHelp("helpMaintAdjBtn","helpMaintAdjBox");
   toggleHelp("helpApgarBtn","helpApgarBox");
+  toggleHelp("helpBindBtn","helpBindBox");
 
   // ===================== COMMON HELPERS =====================
   const el = (id)=>document.getElementById(id);
@@ -1408,6 +1441,138 @@
     }
   }
   calcJaundice();
+
+// ===================== BIND SCORE =====================
+// Scoring used clinically for bilirubin neurotoxicity severity.
+// NOTE: There are slightly different variants in use; this is a practical bedside version (0–3 per domain).
+const bindConfig = [
+  {
+    key: "mental",
+    name: "Mental status",
+    hint: "Overall arousal/behavior.",
+    options: [
+      { label: "Normal (alert, appropriate)", sub: "", score: 0 },
+      { label: "Sleepy but arousable / mild lethargy", sub: "Feeds may be a bit slow", score: 1 },
+      { label: "Very sleepy / difficult to arouse", sub: "Poor feeding", score: 2 },
+      { label: "Stupor / coma / seizures", sub: "Emergency", score: 3 },
+    ],
+  },
+  {
+    key: "tone",
+    name: "Muscle tone",
+    hint: "Tone in trunk/limbs; look for hypo → hyper.",
+    options: [
+      { label: "Normal tone", sub: "", score: 0 },
+      { label: "Mild hypotonia", sub: "“Floppy” but not severe", score: 1 },
+      { label: "Marked hypotonia or intermittent hypertonia", sub: "Back arching episodes may appear", score: 2 },
+      { label: "Sustained hypertonia / opisthotonus", sub: "Rigid arching", score: 3 },
+    ],
+  },
+  {
+    key: "cry",
+    name: "Cry",
+    hint: "Quality of cry.",
+    options: [
+      { label: "Normal cry", sub: "", score: 0 },
+      { label: "High-pitched cry (intermittent)", sub: "", score: 1 },
+      { label: "Persistent high-pitched / shrill cry", sub: "", score: 2 },
+      { label: "Inconsolable shriek OR weak/absent cry", sub: "Severe concern", score: 3 },
+    ],
+  },
+  {
+    key: "gaze",
+    name: "Gaze / oculomotor (optional)",
+    hint: "Eyes and tracking; adds sensitivity for advanced signs.",
+    options: [
+      { label: "Normal gaze / tracking", sub: "", score: 0 },
+      { label: "Occasional gaze abnormality", sub: "e.g., brief upward gaze", score: 1 },
+      { label: "Sustained upward gaze / oculomotor abnormality", sub: "", score: 2 },
+      { label: "“Setting sun” / severe gaze abnormality", sub: "Advanced sign", score: 3 },
+    ],
+  },
+];
+
+function bindRender(){
+  const host = el("bind-items");
+  if(!host) return;
+  host.innerHTML = "";
+
+  // Use the same tap-card renderer you already have for Ballard (renderCardGroup).
+  // We show no maneuver image here (text-only).
+  bindConfig.forEach(item => {
+    renderCardGroup(
+      host,
+      `bind_${item.key}`,
+      item.name,
+      item.hint || "",
+      item.options,
+      0,
+      false,
+      null
+    );
+  });
+
+  calcBind();
+}
+
+function bindGet(key){
+  return getGroupValue(`bind_${key}`);
+}
+
+function bindInterpret(total){
+  // Practical interpretation bands used in many teaching settings:
+  // 0 = none, 1–3 = mild, 4–6 = moderate, >=7 = severe (esp. if any "3" present)
+  if(total === 0) return { label: "No clinical BIND signs (0)", level: "ok" };
+  if(total <= 3) return { label: "Mild BIND (1–3)", level: "warn" };
+  if(total <= 6) return { label: "Moderate BIND (4–6)", level: "warn" };
+  return { label: "Severe BIND (≥7)", level: "warn" };
+}
+
+function calcBind(){
+  const total =
+    bindConfig.reduce((sum, item) => sum + bindGet(item.key), 0);
+
+  el("bindTotalOut").textContent = String(total);
+
+  const interp = bindInterpret(total);
+  el("bindInterpOut").textContent = interp.label;
+
+  const advice = el("bindAdvice");
+  advice.textContent = "";
+
+  // Escalation messaging (non-prescriptive, but appropriately urgent)
+  const anySevereItem = bindConfig.some(it => bindGet(it.key) >= 3);
+
+  if(total === 0){
+    advice.textContent = "No abnormal neuro signs on this score. Still manage jaundice based on TSB, GA, and risk factors.";
+    advice.className = "ok";
+    return;
+  }
+
+  advice.className = "warn";
+
+  if(total <= 3){
+    advice.textContent =
+      "Mild signs: repeat exam, review bilirubin trend and risk factors, and follow local phototherapy/exchange pathway urgently if rising/near threshold.";
+    return;
+  }
+
+  if(total <= 6){
+    advice.textContent =
+      "Moderate signs: urgent senior review. Treat as bilirubin neurotoxicity risk and follow local escalation pathway (often intensive phototherapy + workup; prepare for exchange if indicated).";
+    return;
+  }
+
+  // Severe
+  advice.textContent =
+    "Severe signs: emergency. Immediate senior/NRU review and manage per your local severe jaundice/neurotoxicity protocol (often includes preparation for exchange transfusion and intensive supportive care).";
+  if(anySevereItem){
+    advice.textContent += " (A score of 3 in any domain is particularly concerning.)";
+  }
+}
+
+// Hook BIND into calculator init
+bindRender();
 
   // ===================== GIR =====================
   let gMode = "RATE"; // RATE, MLKD, TARGET
