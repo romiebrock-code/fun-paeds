@@ -158,110 +158,143 @@
       </div>
     </div>
 
-    <!-- ===================== FLUIDS ===================== -->
-    <section id="sec-fluids">
-      <div class="card">
-        <div class="grid">
+  <!-- ===================== FLUIDS ===================== -->
+<section id="sec-fluids">
+  <div class="card">
+    <div class="row">
+      <label>
+        Neonatal fluids
+        <span class="inline" style="gap:6px; justify-content:flex-end;">
+          <span class="helpbtn" id="helpFluidsBtn">?</span>
+        </span>
+      </label>
+      <div class="helpbox" id="helpFluidsBox">
+        <b>Target → Calculate IVF</b>: enter the required TFI and EBM, and the calculator works out IVF.<br/>
+        <b>Given feeds + IVF → Calculate actual TFI</b>: enter what the baby is actually getting, and the calculator works out the delivered TFI.<br/>
+        EBM per feed is converted to daily volume using the selected feed frequency.
+      </div>
+    </div>
 
-          <div class="row">
-            <label>Weight <span class="unit">g</span></label>
-            <input id="weightG" inputmode="decimal" placeholder="e.g. 1200" />
-          </div>
+    <div class="divider"></div>
 
-          <div class="row">
-            <label>
-              TFI
-              <span class="unit">value + unit</span>
-            </label>
-            <div class="inline">
-              <input id="tfi" inputmode="decimal" placeholder="e.g. 80" />
-              <select id="tfiUnit" class="tight" aria-label="TFI unit">
-                <option value="day" selected>mL/kg/day</option>
-                <option value="hour">mL/kg/hour</option>
-              </select>
-            </div>
-          </div>
+    <div class="grid">
+      <div class="two">
+        <div class="row">
+          <label>Weight <span class="unit">g</span></label>
+          <input id="weightG" inputmode="decimal" placeholder="e.g. 1200" />
+        </div>
 
-          <div class="row">
-            <label>Feed frequency <span class="unit">hours</span></label>
-            <input id="freqH" inputmode="decimal" value="3" />
-          </div>
-
-          <div class="row">
-            <label>
-              I’m entering
-              <span class="inline" style="gap:6px; justify-content:flex-end;">
-                <span class="helpbtn" id="helpFluidsBtn">?</span>
-              </span>
-            </label>
-            <div class="seg">
-              <button id="m1" class="active" type="button">EBM/feed</button>
-              <button id="m2" type="button">IVF rate</button>
-              <button id="m3" type="button">IVF/day</button>
-              <button id="m4" type="button">Totals</button>
-            </div>
-            <div class="helpbox" id="helpFluidsBox">
-              Use <b>mL/kg/day</b> for routine daily totals. Use <b>mL/kg/hour</b> when your protocol prescribes an hourly TFI.
-              <br/>Mode tips: <b>Totals</b> lets you enter EBM/day and IVF/day directly and shows “Actual TFI”.
-            </div>
-          </div>
-
-          <div class="row" id="ebmRow">
-            <label>EBM per feed <span class="unit">mL</span></label>
-            <input id="ebmFeed" inputmode="decimal" placeholder="e.g. 5" />
-          </div>
-
-          <div class="row" id="ivfRateRow" style="display:none">
-            <label>IVF rate <span class="unit">mL/hr</span></label>
-            <input id="ivfRate" inputmode="decimal" placeholder="e.g. 1.67" />
-          </div>
-
-          <div class="row" id="ivfDayRow" style="display:none">
-            <label>IVF daily <span class="unit">mL/day</span></label>
-            <input id="ivfDay" inputmode="decimal" placeholder="e.g. 40" />
-          </div>
-
-          <div class="row" id="totalsRow" style="display:none">
-            <label>EBM daily <span class="unit">mL/day</span></label>
-            <input id="ebmDayIn" inputmode="decimal" placeholder="e.g. 40" />
-            <div style="height:10px"></div>
-            <label>IVF daily <span class="unit">mL/day</span></label>
-            <input id="ivfDayIn2" inputmode="decimal" placeholder="e.g. 40" />
-          </div>
-
-          <div class="row" id="roundRow" style="display:none">
-            <label>Round EBM/feed to</label>
-            <select id="roundStep">
-              <option value="0">None</option>
-              <option value="0.5" selected>0.5 mL</option>
-              <option value="1">1 mL</option>
-              <option value="2">2 mL</option>
-            </select>
-          </div>
-
+        <div class="row">
+          <label>Feed frequency <span class="unit">hours</span></label>
+          <input id="freqH" inputmode="decimal" value="3" />
         </div>
       </div>
 
-      <div class="card results">
-        <h3>Results</h3>
-
-        <div class="rrow"><span>Total (from TFI)</span><span id="total" class="bold">—</span></div>
-        <div class="rrow"><span>Total per hour</span><span id="totalHr" class="bold">—</span></div>
-
-        <div class="rrow"><span>EBM/day</span><span id="ebmDay">—</span></div>
-        <div class="rrow" id="ebmFeedNeededRow" style="display:none"><span>EBM/feed (needed)</span><span id="ebmFeedNeeded" class="bold">—</span></div>
-
-        <div class="rrow"><span>IVF/day</span><span id="ivfDayOut" class="bold">—</span></div>
-        <div class="rrow"><span>IVF rate</span><span id="ivfRateOut" class="bold">—</span></div>
-
-        <div class="rrow"><span>Delivered</span><span id="deliveredOut">—</span></div>
-        <div class="rrow"><span>Actual TFI</span><span id="actualTfiOut" class="bold">—</span></div>
-        <div class="rrow"><span>Actual TFI/hour</span><span id="actualTfiHrOut" class="bold">—</span></div>
-
-        <div class="warn" id="warn"></div>
-        <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
+      <div class="row">
+        <label>Calculator mode</label>
+        <div class="seg" style="grid-template-columns: repeat(2, 1fr);">
+          <button id="fm1" class="active" type="button">Target → Calculate IVF</button>
+          <button id="fm2" type="button">Given feeds + IVF → Actual TFI</button>
+        </div>
       </div>
-    </section>
+    </div>
+  </div>
+
+  <!-- TARGET MODE -->
+  <div class="card" id="fluidsTargetCard">
+    <div class="grid">
+      <div class="row">
+        <label>
+          TFI
+          <span class="unit">value + unit</span>
+        </label>
+        <div class="inline">
+          <input id="tfi" inputmode="decimal" placeholder="e.g. 80" />
+          <select id="tfiUnit" class="tight" aria-label="TFI unit">
+            <option value="day" selected>mL/kg/day</option>
+            <option value="hour">mL/kg/hour</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <label>EBM input type</label>
+        <select id="targetEbmMode">
+          <option value="feed" selected>EBM per feed</option>
+          <option value="day">EBM per day</option>
+        </select>
+      </div>
+
+      <div class="row" id="targetEbmFeedRow">
+        <label>EBM per feed <span class="unit">mL</span></label>
+        <input id="targetEbmFeed" inputmode="decimal" placeholder="e.g. 5" />
+      </div>
+
+      <div class="row" id="targetEbmDayRow" style="display:none">
+        <label>EBM per day <span class="unit">mL/day</span></label>
+        <input id="targetEbmDay" inputmode="decimal" placeholder="e.g. 40" />
+      </div>
+    </div>
+  </div>
+
+  <!-- REVERSE MODE -->
+  <div class="card" id="fluidsReverseCard" style="display:none">
+    <div class="grid">
+      <div class="row">
+        <label>Reverse input type</label>
+        <select id="reverseMode">
+          <option value="feed_rate" selected>EBM per feed + IVF rate</option>
+          <option value="feed_day">EBM per feed + IVF per day</option>
+          <option value="day_rate">EBM per day + IVF rate</option>
+          <option value="day_day">EBM per day + IVF per day</option>
+        </select>
+      </div>
+
+      <div class="row" id="revEbmFeedRow">
+        <label>EBM per feed <span class="unit">mL</span></label>
+        <input id="revEbmFeed" inputmode="decimal" placeholder="e.g. 5" />
+      </div>
+
+      <div class="row" id="revEbmDayRow" style="display:none">
+        <label>EBM per day <span class="unit">mL/day</span></label>
+        <input id="revEbmDay" inputmode="decimal" placeholder="e.g. 40" />
+      </div>
+
+      <div class="row" id="revIvfRateRow">
+        <label>IVF rate <span class="unit">mL/hr</span></label>
+        <input id="revIvfRate" inputmode="decimal" placeholder="e.g. 1.67" />
+      </div>
+
+      <div class="row" id="revIvfDayRow" style="display:none">
+        <label>IVF per day <span class="unit">mL/day</span></label>
+        <input id="revIvfDay" inputmode="decimal" placeholder="e.g. 40" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card results">
+    <h3>Results</h3>
+
+    <div class="rrow"><span>Total from target TFI</span><span id="flTotal" class="bold">—</span></div>
+    <div class="rrow"><span>Total from target TFI/hour</span><span id="flTotalHr" class="bold">—</span></div>
+
+    <div class="divider"></div>
+
+    <div class="rrow"><span>EBM/day</span><span id="flEbmDay" class="bold">—</span></div>
+    <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOut" class="bold">—</span></div>
+    <div class="rrow"><span>IVF/day</span><span id="flIvfDay" class="bold">—</span></div>
+    <div class="rrow"><span>IVF/hour</span><span id="flIvfRate" class="bold">—</span></div>
+
+    <div class="divider"></div>
+
+    <div class="rrow"><span>Delivered total/day</span><span id="flDelivered" class="bold">—</span></div>
+    <div class="rrow"><span>Actual TFI/day</span><span id="flActualTfi" class="bold">—</span></div>
+    <div class="rrow"><span>Actual TFI/hour</span><span id="flActualTfiHr" class="bold">—</span></div>
+
+    <div class="warn" id="flWarn"></div>
+    <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
+  </div>
+</section>
 
     <!-- ===================== BALLARD ===================== -->
     <section id="sec-ballard" style="display:none">
@@ -685,7 +718,7 @@
 <script>
   // ===================== PWA SERVICE WORKER =====================
   // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
-  const SW_VER = "14";  // <-- bump this if you change service-worker.js
+  const SW_VER = "15";  // <-- bump this if you change service-worker.js
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -767,127 +800,202 @@
     return d > 0 ? "ABOVE" : "BELOW";
   }
 
-  // ===================== FLUIDS =====================
-  let mode = "EBM"; // EBM, IVFRATE, IVFDAY, TOTALS
-  const m1 = el("m1"), m2 = el("m2"), m3 = el("m3"), m4 = el("m4");
-  const ebmRow = el("ebmRow");
-  const ivfRateRow = el("ivfRateRow");
-  const ivfDayRow = el("ivfDayRow");
-  const totalsRow = el("totalsRow");
-  const roundRow = el("roundRow");
-  const ebmFeedNeededRow = el("ebmFeedNeededRow");
+   // ===================== FLUIDS =====================
+  let fluidMode = "TARGET"; // TARGET, REVERSE
 
-  function setMode(newMode){
-    mode = newMode;
-    m1.classList.toggle("active", mode==="EBM");
-    m2.classList.toggle("active", mode==="IVFRATE");
-    m3.classList.toggle("active", mode==="IVFDAY");
-    m4.classList.toggle("active", mode==="TOTALS");
+  const fm1 = el("fm1");
+  const fm2 = el("fm2");
 
-    ebmRow.style.display = (mode==="EBM") ? "" : "none";
-    ivfRateRow.style.display = (mode==="IVFRATE") ? "" : "none";
-    ivfDayRow.style.display = (mode==="IVFDAY") ? "" : "none";
-    totalsRow.style.display = (mode==="TOTALS") ? "" : "none";
+  const fluidsTargetCard = el("fluidsTargetCard");
+  const fluidsReverseCard = el("fluidsReverseCard");
 
-    const showFeedNeeded = (mode==="IVFRATE" || mode==="IVFDAY" || mode==="TOTALS");
-    roundRow.style.display = showFeedNeeded ? "" : "none";
-    ebmFeedNeededRow.style.display = showFeedNeeded ? "" : "none";
+  const targetEbmMode = el("targetEbmMode");
+  const targetEbmFeedRow = el("targetEbmFeedRow");
+  const targetEbmDayRow = el("targetEbmDayRow");
+
+  const reverseMode = el("reverseMode");
+  const revEbmFeedRow = el("revEbmFeedRow");
+  const revEbmDayRow = el("revEbmDayRow");
+  const revIvfRateRow = el("revIvfRateRow");
+  const revIvfDayRow = el("revIvfDayRow");
+
+  function setFluidMode(mode){
+    fluidMode = mode;
+
+    fm1.classList.toggle("active", fluidMode==="TARGET");
+    fm2.classList.toggle("active", fluidMode==="REVERSE");
+
+    fluidsTargetCard.style.display = (fluidMode==="TARGET") ? "" : "none";
+    fluidsReverseCard.style.display = (fluidMode==="REVERSE") ? "" : "none";
 
     calcFluids();
   }
-  m1.onclick = ()=>setMode("EBM");
-  m2.onclick = ()=>setMode("IVFRATE");
-  m3.onclick = ()=>setMode("IVFDAY");
-  m4.onclick = ()=>setMode("TOTALS");
 
-  ["weightG","tfi","tfiUnit","freqH","ebmFeed","ivfRate","ivfDay","ebmDayIn","ivfDayIn2","roundStep"]
-    .map(el).forEach(x => x && x.addEventListener("input", calcFluids));
+  function updateTargetRows(){
+    const mode = targetEbmMode.value;
+    targetEbmFeedRow.style.display = (mode === "feed") ? "" : "none";
+    targetEbmDayRow.style.display = (mode === "day") ? "" : "none";
+  }
+
+  function updateReverseRows(){
+    const mode = reverseMode.value;
+
+    revEbmFeedRow.style.display = (mode === "feed_rate" || mode === "feed_day") ? "" : "none";
+    revEbmDayRow.style.display  = (mode === "day_rate" || mode === "day_day") ? "" : "none";
+
+    revIvfRateRow.style.display = (mode === "feed_rate" || mode === "day_rate") ? "" : "none";
+    revIvfDayRow.style.display  = (mode === "feed_day" || mode === "day_day") ? "" : "none";
+  }
+
+  fm1.onclick = ()=>setFluidMode("TARGET");
+  fm2.onclick = ()=>setFluidMode("REVERSE");
+
+  targetEbmMode.addEventListener("change", ()=>{
+    updateTargetRows();
+    calcFluids();
+  });
+
+  reverseMode.addEventListener("change", ()=>{
+    updateReverseRows();
+    calcFluids();
+  });
+
+  [
+    "weightG","freqH",
+    "tfi","tfiUnit","targetEbmFeed","targetEbmDay",
+    "revEbmFeed","revEbmDay","revIvfRate","revIvfDay"
+  ].map(el).forEach(x => x && x.addEventListener("input", calcFluids));
+
   el("tfiUnit").addEventListener("change", calcFluids);
-  el("roundStep").addEventListener("change", calcFluids);
 
   function calcFluids(){
-    const wG = numOrNull(el("weightG").value);
-    const tfiVal = numOrNull(el("tfi").value);
-    const tfiUnit = el("tfiUnit").value;
-    const h = numOrNull(el("freqH").value);
-    const warn = el("warn");
+    const warn = el("flWarn");
     warn.textContent = "";
 
-    const wKg = (wG != null && wG > 0) ? (wG/1000) : null;
-    const feedsPerDay = (h != null && h > 0) ? (24/h) : null;
+    const wG = numOrNull(el("weightG").value);
+    const freqH = numOrNull(el("freqH").value);
 
-    const tfiDaily = (tfiVal!=null) ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal) : null;
+    const wKg = (wG != null && wG > 0) ? (wG / 1000) : null;
+    const feedsPerDay = (freqH != null && freqH > 0) ? (24 / freqH) : null;
 
-    const total = (wKg!=null && tfiDaily!=null) ? (wKg*tfiDaily) : null;
-    const totalPerHour = (total!=null) ? (total/24) : null;
+    let totalTargetDay = null;
+    let totalTargetHr = null;
 
-    const ebmFeedIn = clamp0(numOrNull(el("ebmFeed").value));
-    const ivfRateIn = clamp0(numOrNull(el("ivfRate").value));
-    const ivfDayIn  = clamp0(numOrNull(el("ivfDay").value));
-    const ebmDayIn  = clamp0(numOrNull(el("ebmDayIn").value));
-    const ivfDayIn2 = clamp0(numOrNull(el("ivfDayIn2").value));
+    let ebmDay = null;
+    let ebmFeedOut = null;
+    let ivfDay = null;
+    let ivfRate = null;
+    let deliveredDay = null;
+    let actualTfiDay = null;
+    let actualTfiHr = null;
 
-    let ebmDay = null, ivfDay = null;
+    if(wKg == null){
+      warn.textContent = "Enter weight (g).";
+    }
 
-    if(mode==="EBM"){
-      if(total != null && feedsPerDay != null && ebmFeedIn != null){
-        ebmDay = ebmFeedIn * feedsPerDay;
-        ivfDay = Math.max(0, total - ebmDay);
-        if(ebmDay > total) warn.textContent = "EBM exceeds total — IVF set to 0.";
+    if(feedsPerDay == null){
+      warn.textContent = warn.textContent ? warn.textContent + " Enter valid feed frequency." : "Enter valid feed frequency.";
+    }
+
+    // ================= TARGET MODE =================
+    if(fluidMode === "TARGET"){
+      const tfiVal = numOrNull(el("tfi").value);
+      const tfiUnit = el("tfiUnit").value;
+
+      const tfiDaily = (tfiVal != null)
+        ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal)
+        : null;
+
+      if(wKg != null && tfiDaily != null){
+        totalTargetDay = wKg * tfiDaily;
+        totalTargetHr = totalTargetDay / 24;
+      }
+
+      if(targetEbmMode.value === "feed"){
+        const v = clamp0(numOrNull(el("targetEbmFeed").value) ?? 0);
+        if(feedsPerDay != null){
+          ebmFeedOut = v;
+          ebmDay = v * feedsPerDay;
+        }
+      } else {
+        const v = clamp0(numOrNull(el("targetEbmDay").value) ?? 0);
+        ebmDay = v;
+        if(feedsPerDay != null && v != null){
+          ebmFeedOut = v / feedsPerDay;
+        }
+      }
+
+      if(totalTargetDay != null && ebmDay != null){
+        ivfDay = Math.max(0, totalTargetDay - ebmDay);
+        ivfRate = ivfDay / 24;
+        deliveredDay = ebmDay + ivfDay;
+        actualTfiDay = (wKg != null && wKg > 0) ? (deliveredDay / wKg) : null;
+        actualTfiHr = (actualTfiDay != null) ? (actualTfiDay / 24) : null;
+
+        if(ebmDay > totalTargetDay){
+          warn.textContent = "EBM exceeds target total — IVF set to 0.";
+        }
       }
     }
 
-    if(mode==="IVFRATE"){
-      if(ivfRateIn != null) ivfDay = ivfRateIn * 24;
-      if(total != null && ivfDay != null){
-        ebmDay = Math.max(0, total - ivfDay);
-        if(ivfDay > total) warn.textContent = "IVF exceeds total — EBM set to 0.";
+    // ================= REVERSE MODE =================
+    if(fluidMode === "REVERSE"){
+      const rMode = reverseMode.value;
+
+      if(rMode === "feed_rate" || rMode === "feed_day"){
+        const v = clamp0(numOrNull(el("revEbmFeed").value) ?? 0);
+        ebmFeedOut = v;
+        if(feedsPerDay != null){
+          ebmDay = v * feedsPerDay;
+        }
+      }
+
+      if(rMode === "day_rate" || rMode === "day_day"){
+        const v = clamp0(numOrNull(el("revEbmDay").value) ?? 0);
+        ebmDay = v;
+        if(feedsPerDay != null && v != null){
+          ebmFeedOut = v / feedsPerDay;
+        }
+      }
+
+      if(rMode === "feed_rate" || rMode === "day_rate"){
+        const v = clamp0(numOrNull(el("revIvfRate").value) ?? 0);
+        ivfRate = v;
+        ivfDay = v * 24;
+      }
+
+      if(rMode === "feed_day" || rMode === "day_day"){
+        const v = clamp0(numOrNull(el("revIvfDay").value) ?? 0);
+        ivfDay = v;
+        ivfRate = v / 24;
+      }
+
+      if(ebmDay != null || ivfDay != null){
+        deliveredDay = (ebmDay ?? 0) + (ivfDay ?? 0);
+      }
+
+      if(wKg != null && wKg > 0 && deliveredDay != null){
+        actualTfiDay = deliveredDay / wKg;
+        actualTfiHr = actualTfiDay / 24;
       }
     }
 
-    if(mode==="IVFDAY"){
-      if(ivfDayIn != null) ivfDay = ivfDayIn;
-      if(total != null && ivfDay != null){
-        ebmDay = Math.max(0, total - ivfDay);
-        if(ivfDay > total) warn.textContent = "IVF exceeds total — EBM set to 0.";
-      }
-    }
+    el("flTotal").textContent = totalTargetDay == null ? "—" : `${fmt(totalTargetDay)} mL/day`;
+    el("flTotalHr").textContent = totalTargetHr == null ? "—" : `${fmt(totalTargetHr)} mL/hr`;
 
-    if(mode==="TOTALS"){
-      if(ebmDayIn != null) ebmDay = ebmDayIn;
-      if(ivfDayIn2 != null) ivfDay = ivfDayIn2;
-      if(total != null && ((ebmDay ?? 0) + (ivfDay ?? 0)) > total){
-        warn.textContent = "Delivered exceeds Total (TFI target).";
-      }
-    }
+    el("flEbmDay").textContent = ebmDay == null ? "—" : `${fmt(ebmDay)} mL/day`;
+    el("flEbmFeedOut").textContent = ebmFeedOut == null ? "—" : `${fmt(ebmFeedOut)} mL/feed`;
+    el("flIvfDay").textContent = ivfDay == null ? "—" : `${fmt(ivfDay)} mL/day`;
+    el("flIvfRate").textContent = ivfRate == null ? "—" : `${fmt(ivfRate)} mL/hr`;
 
-    const ivfRateOut = (ivfDay!=null) ? (ivfDay/24) : null;
-
-    let ebmFeedNeeded = null;
-    if((mode==="IVFRATE" || mode==="IVFDAY" || mode==="TOTALS") && ebmDay!=null && feedsPerDay!=null && feedsPerDay>0){
-      ebmFeedNeeded = ebmDay/feedsPerDay;
-      const step = numOrNull(el("roundStep").value);
-      ebmFeedNeeded = roundToStep(ebmFeedNeeded, step);
-    }
-
-    const hasAnyDaily = (ebmDay != null) || (ivfDay != null);
-    const deliveredDay = ( (ebmDay ?? 0) + (ivfDay ?? 0) );
-    const actualTfi = (wKg != null && wKg > 0 && hasAnyDaily) ? (deliveredDay / wKg) : null;
-    const actualTfiHr = (actualTfi != null) ? (actualTfi / 24) : null;
-
-    el("total").textContent = total==null ? "—" : `${fmt(total)} mL/day`;
-    el("totalHr").textContent = totalPerHour==null ? "—" : `${fmt(totalPerHour)} mL/hr`;
-
-    el("ebmDay").textContent = ebmDay==null ? "—" : `${fmt(ebmDay)} mL/day`;
-    el("ivfDayOut").textContent = ivfDay==null ? "—" : `${fmt(ivfDay)} mL/day`;
-    el("ivfRateOut").textContent = ivfRateOut==null ? "—" : `${fmt(ivfRateOut)} mL/hr`;
-    el("ebmFeedNeeded").textContent = ebmFeedNeeded==null ? "—" : `${fmt(ebmFeedNeeded)} mL/feed`;
-
-    el("deliveredOut").textContent = hasAnyDaily ? `${fmt(deliveredDay)} mL/day` : "—";
-    el("actualTfiOut").textContent = actualTfi==null ? "—" : `${fmt(actualTfi)} mL/kg/day`;
-    el("actualTfiHrOut").textContent = actualTfiHr==null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
+    el("flDelivered").textContent = deliveredDay == null ? "—" : `${fmt(deliveredDay)} mL/day`;
+    el("flActualTfi").textContent = actualTfiDay == null ? "—" : `${fmt(actualTfiDay)} mL/kg/day`;
+    el("flActualTfiHr").textContent = actualTfiHr == null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
   }
-  calcFluids();
+
+  updateTargetRows();
+  updateReverseRows();
+  setFluidMode("TARGET");
 
   // ===================== BALLARD (maneuver SVGs, NOT stick-figure thumbs) =====================
   function ballardManeuverSvg(type){
