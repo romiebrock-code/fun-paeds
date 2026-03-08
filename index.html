@@ -272,28 +272,33 @@
     </div>
   </div>
 
-  <div class="card results">
-    <h3>Results</h3>
+<div class="card results">
+  <h3>Results</h3>
 
+  <div id="flTargetBlock">
     <div class="rrow"><span>Total from target TFI</span><span id="flTotal" class="bold">—</span></div>
     <div class="rrow"><span>Total from target TFI/hour</span><span id="flTotalHr" class="bold">—</span></div>
-
     <div class="divider"></div>
-
     <div class="rrow"><span>EBM/day</span><span id="flEbmDay" class="bold">—</span></div>
     <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOut" class="bold">—</span></div>
     <div class="rrow"><span>IVF/day</span><span id="flIvfDay" class="bold">—</span></div>
     <div class="rrow"><span>IVF/hour</span><span id="flIvfRate" class="bold">—</span></div>
+  </div>
 
+  <div id="flReverseBlock" style="display:none">
+    <div class="rrow"><span>EBM/day</span><span id="flEbmDayRev" class="bold">—</span></div>
+    <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOutRev" class="bold">—</span></div>
+    <div class="rrow"><span>IVF/day</span><span id="flIvfDayRev" class="bold">—</span></div>
+    <div class="rrow"><span>IVF/hour</span><span id="flIvfRateRev" class="bold">—</span></div>
     <div class="divider"></div>
-
     <div class="rrow"><span>Delivered total/day</span><span id="flDelivered" class="bold">—</span></div>
     <div class="rrow"><span>Actual TFI/day</span><span id="flActualTfi" class="bold">—</span></div>
     <div class="rrow"><span>Actual TFI/hour</span><span id="flActualTfiHr" class="bold">—</span></div>
-
-    <div class="warn" id="flWarn"></div>
-    <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
   </div>
+
+  <div class="warn" id="flWarn"></div>
+  <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
+</div>
 </section>
 
     <!-- ===================== BALLARD ===================== -->
@@ -718,7 +723,7 @@
 <script>
   // ===================== PWA SERVICE WORKER =====================
   // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
-  const SW_VER = "15";  // <-- bump this if you change service-worker.js
+  const SW_VER = "16";  // <-- bump this if you change service-worker.js
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -808,6 +813,8 @@
 
   const fluidsTargetCard = el("fluidsTargetCard");
   const fluidsReverseCard = el("fluidsReverseCard");
+  const flTargetBlock = el("flTargetBlock");
+  const flReverseBlock = el("flReverseBlock");
 
   const targetEbmMode = el("targetEbmMode");
   const targetEbmFeedRow = el("targetEbmFeedRow");
@@ -820,16 +827,19 @@
   const revIvfDayRow = el("revIvfDayRow");
 
   function setFluidMode(mode){
-    fluidMode = mode;
+  fluidMode = mode;
 
-    fm1.classList.toggle("active", fluidMode==="TARGET");
-    fm2.classList.toggle("active", fluidMode==="REVERSE");
+  fm1.classList.toggle("active", fluidMode==="TARGET");
+  fm2.classList.toggle("active", fluidMode==="REVERSE");
 
-    fluidsTargetCard.style.display = (fluidMode==="TARGET") ? "" : "none";
-    fluidsReverseCard.style.display = (fluidMode==="REVERSE") ? "" : "none";
+  fluidsTargetCard.style.display = (fluidMode==="TARGET") ? "" : "none";
+  fluidsReverseCard.style.display = (fluidMode==="REVERSE") ? "" : "none";
 
-    calcFluids();
-  }
+  flTargetBlock.style.display = (fluidMode==="TARGET") ? "" : "none";
+  flReverseBlock.style.display = (fluidMode==="REVERSE") ? "" : "none";
+
+  calcFluids();
+}
 
   function updateTargetRows(){
     const mode = targetEbmMode.value;
@@ -898,44 +908,23 @@
     }
 
     // ================= TARGET MODE =================
-    if(fluidMode === "TARGET"){
-      const tfiVal = numOrNull(el("tfi").value);
-      const tfiUnit = el("tfiUnit").value;
+       if(fluidMode === "TARGET"){
+      el("flTotal").textContent = totalTargetDay == null ? "—" : `${fmt(totalTargetDay)} mL/day`;
+      el("flTotalHr").textContent = totalTargetHr == null ? "—" : `${fmt(totalTargetHr)} mL/hr`;
 
-      const tfiDaily = (tfiVal != null)
-        ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal)
-        : null;
+      el("flEbmDay").textContent = ebmDay == null ? "—" : `${fmt(ebmDay)} mL/day`;
+      el("flEbmFeedOut").textContent = ebmFeedOut == null ? "—" : `${fmt(ebmFeedOut)} mL/feed`;
+      el("flIvfDay").textContent = ivfDay == null ? "—" : `${fmt(ivfDay)} mL/day`;
+      el("flIvfRate").textContent = ivfRate == null ? "—" : `${fmt(ivfRate)} mL/hr`;
+    } else {
+      el("flEbmDayRev").textContent = ebmDay == null ? "—" : `${fmt(ebmDay)} mL/day`;
+      el("flEbmFeedOutRev").textContent = ebmFeedOut == null ? "—" : `${fmt(ebmFeedOut)} mL/feed`;
+      el("flIvfDayRev").textContent = ivfDay == null ? "—" : `${fmt(ivfDay)} mL/day`;
+      el("flIvfRateRev").textContent = ivfRate == null ? "—" : `${fmt(ivfRate)} mL/hr`;
 
-      if(wKg != null && tfiDaily != null){
-        totalTargetDay = wKg * tfiDaily;
-        totalTargetHr = totalTargetDay / 24;
-      }
-
-      if(targetEbmMode.value === "feed"){
-        const v = clamp0(numOrNull(el("targetEbmFeed").value) ?? 0);
-        if(feedsPerDay != null){
-          ebmFeedOut = v;
-          ebmDay = v * feedsPerDay;
-        }
-      } else {
-        const v = clamp0(numOrNull(el("targetEbmDay").value) ?? 0);
-        ebmDay = v;
-        if(feedsPerDay != null && v != null){
-          ebmFeedOut = v / feedsPerDay;
-        }
-      }
-
-      if(totalTargetDay != null && ebmDay != null){
-        ivfDay = Math.max(0, totalTargetDay - ebmDay);
-        ivfRate = ivfDay / 24;
-        deliveredDay = ebmDay + ivfDay;
-        actualTfiDay = (wKg != null && wKg > 0) ? (deliveredDay / wKg) : null;
-        actualTfiHr = (actualTfiDay != null) ? (actualTfiDay / 24) : null;
-
-        if(ebmDay > totalTargetDay){
-          warn.textContent = "EBM exceeds target total — IVF set to 0.";
-        }
-      }
+      el("flDelivered").textContent = deliveredDay == null ? "—" : `${fmt(deliveredDay)} mL/day`;
+      el("flActualTfi").textContent = actualTfiDay == null ? "—" : `${fmt(actualTfiDay)} mL/kg/day`;
+      el("flActualTfiHr").textContent = actualTfiHr == null ? "—" : `${fmt(actualTfiHr)} mL/kg/hr`;
     }
 
     // ================= REVERSE MODE =================
