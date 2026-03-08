@@ -90,7 +90,6 @@
     }
     .pill input{ width:auto; }
 
-    /* --- Tap-cards --- */
     .cards { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     @media (max-width: 760px){ .cards { grid-template-columns: 1fr; } }
 
@@ -117,7 +116,6 @@
     .itemhead h4{ margin:0; font-size: 15px; font-weight: 850; color:#101828; }
     .smallhint{ color:#667085; font-size: 12px; margin-top: 2px; line-height:1.3; }
 
-    /* Ballard maneuver illustration box (the “beautiful” SVGs) */
     .maneuverBox{
       margin: 8px 0 10px;
       padding: 10px;
@@ -150,7 +148,7 @@
           <option value="ballard">Ballard Score</option>
           <option value="thompson">Thompson Score</option>
           <option value="jaundice">Jaundice (Photo/Exchange)</option>
-	  <option value="bind">BIND Score</option>
+          <option value="bind">BIND Score</option>
           <option value="gir">Glucose Infusion Rate (GIR)</option>
           <option value="maint">Maintenance Fluids</option>
           <option value="apgar">APGAR</option>
@@ -200,7 +198,6 @@
     </div>
   </div>
 
-  <!-- TARGET MODE -->
   <div class="card" id="fluidsTargetCard">
     <div class="grid">
       <div class="row">
@@ -237,7 +234,6 @@
     </div>
   </div>
 
-  <!-- REVERSE MODE -->
   <div class="card" id="fluidsReverseCard" style="display:none">
     <div class="grid">
       <div class="row">
@@ -272,33 +268,33 @@
     </div>
   </div>
 
-<div class="card results">
-  <h3>Results</h3>
+  <div class="card results">
+    <h3>Results</h3>
 
-  <div id="flTargetBlock">
-    <div class="rrow"><span>Total from target TFI</span><span id="flTotal" class="bold">—</span></div>
-    <div class="rrow"><span>Total from target TFI/hour</span><span id="flTotalHr" class="bold">—</span></div>
-    <div class="divider"></div>
-    <div class="rrow"><span>EBM/day</span><span id="flEbmDay" class="bold">—</span></div>
-    <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOut" class="bold">—</span></div>
-    <div class="rrow"><span>IVF/day</span><span id="flIvfDay" class="bold">—</span></div>
-    <div class="rrow"><span>IVF/hour</span><span id="flIvfRate" class="bold">—</span></div>
+    <div id="flTargetBlock">
+      <div class="rrow"><span>Total from target TFI</span><span id="flTotal" class="bold">—</span></div>
+      <div class="rrow"><span>Total from target TFI/hour</span><span id="flTotalHr" class="bold">—</span></div>
+      <div class="divider"></div>
+      <div class="rrow"><span>EBM/day</span><span id="flEbmDay" class="bold">—</span></div>
+      <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOut" class="bold">—</span></div>
+      <div class="rrow"><span>IVF/day</span><span id="flIvfDay" class="bold">—</span></div>
+      <div class="rrow"><span>IVF/hour</span><span id="flIvfRate" class="bold">—</span></div>
+    </div>
+
+    <div id="flReverseBlock" style="display:none">
+      <div class="rrow"><span>EBM/day</span><span id="flEbmDayRev" class="bold">—</span></div>
+      <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOutRev" class="bold">—</span></div>
+      <div class="rrow"><span>IVF/day</span><span id="flIvfDayRev" class="bold">—</span></div>
+      <div class="rrow"><span>IVF/hour</span><span id="flIvfRateRev" class="bold">—</span></div>
+      <div class="divider"></div>
+      <div class="rrow"><span>Delivered total/day</span><span id="flDelivered" class="bold">—</span></div>
+      <div class="rrow"><span>Actual TFI/day</span><span id="flActualTfi" class="bold">—</span></div>
+      <div class="rrow"><span>Actual TFI/hour</span><span id="flActualTfiHr" class="bold">—</span></div>
+    </div>
+
+    <div class="warn" id="flWarn"></div>
+    <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
   </div>
-
-  <div id="flReverseBlock" style="display:none">
-    <div class="rrow"><span>EBM/day</span><span id="flEbmDayRev" class="bold">—</span></div>
-    <div class="rrow"><span>EBM/feed</span><span id="flEbmFeedOutRev" class="bold">—</span></div>
-    <div class="rrow"><span>IVF/day</span><span id="flIvfDayRev" class="bold">—</span></div>
-    <div class="rrow"><span>IVF/hour</span><span id="flIvfRateRev" class="bold">—</span></div>
-    <div class="divider"></div>
-    <div class="rrow"><span>Delivered total/day</span><span id="flDelivered" class="bold">—</span></div>
-    <div class="rrow"><span>Actual TFI/day</span><span id="flActualTfi" class="bold">—</span></div>
-    <div class="rrow"><span>Actual TFI/hour</span><span id="flActualTfiHr" class="bold">—</span></div>
-  </div>
-
-  <div class="warn" id="flWarn"></div>
-  <div class="foot">Clinical support only — verify against local protocol and clinical context.</div>
-</div>
 </section>
 
     <!-- ===================== BALLARD ===================== -->
@@ -448,34 +444,34 @@
     </section>
 
     <!-- ===================== BIND ===================== -->
-<section id="sec-bind" style="display:none">
-  <div class="card">
-    <div class="row">
-      <label>
-        BIND score (bilirubin neurotoxicity)
-        <span class="inline" style="gap:6px; justify-content:flex-end;">
-          <span class="helpbtn" id="helpBindBtn">?</span>
-        </span>
-      </label>
-      <div class="helpbox" id="helpBindBox">
-        BIND describes <b>clinical signs of bilirubin-induced neurologic dysfunction</b>.
-        It does <b>not</b> replace TSB-based treatment thresholds. Use BIND to communicate neuro status and urgency.
+    <section id="sec-bind" style="display:none">
+      <div class="card">
+        <div class="row">
+          <label>
+            BIND score (bilirubin neurotoxicity)
+            <span class="inline" style="gap:6px; justify-content:flex-end;">
+              <span class="helpbtn" id="helpBindBtn">?</span>
+            </span>
+          </label>
+          <div class="helpbox" id="helpBindBox">
+            BIND describes <b>clinical signs of bilirubin-induced neurologic dysfunction</b>.
+            It does <b>not</b> replace TSB-based treatment thresholds. Use BIND to communicate neuro status and urgency.
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="grid" id="bind-items"></div>
       </div>
-    </div>
 
-    <div class="divider"></div>
-
-    <div class="grid" id="bind-items"></div>
-  </div>
-
-  <div class="card results">
-    <h3>Results</h3>
-    <div class="rrow"><span>Total BIND</span><span id="bindTotalOut" class="bold">—</span></div>
-    <div class="rrow"><span>Interpretation</span><span id="bindInterpOut" class="bold">—</span></div>
-    <div id="bindAdvice" class="warn"></div>
-    <div class="foot">Clinical support only — correlate with TSB, GA, risk factors and local jaundice pathway.</div>
-  </div>
-</section>
+      <div class="card results">
+        <h3>Results</h3>
+        <div class="rrow"><span>Total BIND</span><span id="bindTotalOut" class="bold">—</span></div>
+        <div class="rrow"><span>Interpretation</span><span id="bindInterpOut" class="bold">—</span></div>
+        <div id="bindAdvice" class="warn"></div>
+        <div class="foot">Clinical support only — correlate with TSB, GA, risk factors and local jaundice pathway.</div>
+      </div>
+    </section>
 
     <!-- ===================== GIR ===================== -->
     <section id="sec-gir" style="display:none">
@@ -722,8 +718,7 @@
 
 <script>
   // ===================== PWA SERVICE WORKER =====================
-  // Bump SW_VER whenever you want to force clients to fetch the newest service-worker.js
-  const SW_VER = "17";  // <-- bump this if you change service-worker.js
+  const SW_VER = "18";
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -806,7 +801,7 @@
   }
 
   // ===================== FLUIDS =====================
-  let fluidMode = "TARGET"; // TARGET, REVERSE
+  let fluidMode = "TARGET";
 
   const fm1 = el("fm1");
   const fm2 = el("fm2");
@@ -909,7 +904,6 @@
         : "Enter valid feed frequency.";
     }
 
-    // ================= TARGET MODE =================
     if(fluidMode === "TARGET"){
       const tfiVal = numOrNull(el("tfi").value);
       const tfiUnit = el("tfiUnit").value;
@@ -951,7 +945,6 @@
       }
     }
 
-    // ================= REVERSE MODE =================
     if(fluidMode === "REVERSE"){
       const rMode = reverseMode.value;
 
@@ -999,7 +992,6 @@
       }
     }
 
-    // ================= OUTPUTS =================
     if(fluidMode === "TARGET"){
       el("flTotal").textContent = totalTargetDay == null ? "—" : `${fmt(totalTargetDay)} mL/day`;
       el("flTotalHr").textContent = totalTargetHr == null ? "—" : `${fmt(totalTargetHr)} mL/hr`;
@@ -1024,7 +1016,7 @@
   updateReverseRows();
   setFluidMode("TARGET");
 
-  // ===================== BALLARD (maneuver SVGs, NOT stick-figure thumbs) =====================
+  // ===================== BALLARD =====================
   function ballardManeuverSvg(type){
     const stroke = "#111827";
     const faint = "#e5e7eb";
@@ -1302,7 +1294,17 @@
     return null;
   }
 
-  function renderCardGroup(host, groupId, title, hint, options, defaultIndex=0, showManeuver=false, maneuverType=null){
+  function renderCardGroup(
+    host,
+    groupId,
+    title,
+    hint,
+    options,
+    defaultIndex=0,
+    showManeuver=false,
+    maneuverType=null,
+    onChange=null
+  ){
     const block = document.createElement("div");
     block.className = "itemblock";
     block.dataset.groupId = groupId;
@@ -1346,10 +1348,16 @@
         [...cards.querySelectorAll(".cardopt")].forEach(x => x.classList.remove("active"));
         c.classList.add("active");
         block.dataset.value = String(opt.score);
-        calcBallard();
+        if(typeof onChange === "function") onChange();
       }
+
       c.addEventListener("click", activate);
-      c.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); activate(); } });
+      c.addEventListener("keydown", (e)=>{
+        if(e.key==="Enter" || e.key===" "){
+          e.preventDefault();
+          activate();
+        }
+      });
 
       cards.appendChild(c);
     });
@@ -1373,20 +1381,47 @@
     neuroHost.innerHTML = "";
     physHost.innerHTML = "";
 
-    // Neuromuscular: show maneuver SVG above the choices
     ballardNeuroConfig.forEach(item => {
-      renderCardGroup(neuroHost, `bn_${item.key}`, item.name, item.hint || "", item.options, 0, true, item.key);
+      renderCardGroup(
+        neuroHost,
+        `bn_${item.key}`,
+        item.name,
+        item.hint || "",
+        item.options,
+        0,
+        true,
+        item.key,
+        calcBallard
+      );
     });
 
-    // Physical: no maneuver SVG
     ballardPhysicalConfigBase.forEach(item => {
-      renderCardGroup(physHost, `bp_${item.key}`, item.name, "", item.options, 0, false, null);
+      renderCardGroup(
+        physHost,
+        `bp_${item.key}`,
+        item.name,
+        "",
+        item.options,
+        0,
+        false,
+        null,
+        calcBallard
+      );
     });
 
-    // Sex-specific genitals
     const sex = el("ballardSex")?.value ?? "male";
     const gen = (sex === "male") ? ballardGenitalsMale : ballardGenitalsFemale;
-    renderCardGroup(physHost, "bp_genitals", gen.name, "", gen.options, 0, false, null);
+    renderCardGroup(
+      physHost,
+      "bp_genitals",
+      gen.name,
+      "",
+      gen.options,
+      0,
+      false,
+      null,
+      calcBallard
+    );
 
     calcBallard();
   }
@@ -1577,140 +1612,131 @@
   }
   calcJaundice();
 
-// ===================== BIND SCORE =====================
-// Scoring used clinically for bilirubin neurotoxicity severity.
-// NOTE: There are slightly different variants in use; this is a practical bedside version (0–3 per domain).
-const bindConfig = [
-  {
-    key: "mental",
-    name: "Mental status",
-    hint: "Overall arousal/behavior.",
-    options: [
-      { label: "Normal (alert, appropriate)", sub: "", score: 0 },
-      { label: "Sleepy but arousable / mild lethargy", sub: "Feeds may be a bit slow", score: 1 },
-      { label: "Very sleepy / difficult to arouse", sub: "Poor feeding", score: 2 },
-      { label: "Stupor / coma / seizures", sub: "Emergency", score: 3 },
-    ],
-  },
-  {
-    key: "tone",
-    name: "Muscle tone",
-    hint: "Tone in trunk/limbs; look for hypo → hyper.",
-    options: [
-      { label: "Normal tone", sub: "", score: 0 },
-      { label: "Mild hypotonia", sub: "“Floppy” but not severe", score: 1 },
-      { label: "Marked hypotonia or intermittent hypertonia", sub: "Back arching episodes may appear", score: 2 },
-      { label: "Sustained hypertonia / opisthotonus", sub: "Rigid arching", score: 3 },
-    ],
-  },
-  {
-    key: "cry",
-    name: "Cry",
-    hint: "Quality of cry.",
-    options: [
-      { label: "Normal cry", sub: "", score: 0 },
-      { label: "High-pitched cry (intermittent)", sub: "", score: 1 },
-      { label: "Persistent high-pitched / shrill cry", sub: "", score: 2 },
-      { label: "Inconsolable shriek OR weak/absent cry", sub: "Severe concern", score: 3 },
-    ],
-  },
-  {
-    key: "gaze",
-    name: "Gaze / oculomotor (optional)",
-    hint: "Eyes and tracking; adds sensitivity for advanced signs.",
-    options: [
-      { label: "Normal gaze / tracking", sub: "", score: 0 },
-      { label: "Occasional gaze abnormality", sub: "e.g., brief upward gaze", score: 1 },
-      { label: "Sustained upward gaze / oculomotor abnormality", sub: "", score: 2 },
-      { label: "“Setting sun” / severe gaze abnormality", sub: "Advanced sign", score: 3 },
-    ],
-  },
-];
+  // ===================== BIND SCORE =====================
+  const bindConfig = [
+    {
+      key: "mental",
+      name: "Mental status",
+      hint: "Overall arousal/behavior.",
+      options: [
+        { label: "Normal (alert, appropriate)", sub: "", score: 0 },
+        { label: "Sleepy but arousable / mild lethargy", sub: "Feeds may be a bit slow", score: 1 },
+        { label: "Very sleepy / difficult to arouse", sub: "Poor feeding", score: 2 },
+        { label: "Stupor / coma / seizures", sub: "Emergency", score: 3 },
+      ],
+    },
+    {
+      key: "tone",
+      name: "Muscle tone",
+      hint: "Tone in trunk/limbs; look for hypo → hyper.",
+      options: [
+        { label: "Normal tone", sub: "", score: 0 },
+        { label: "Mild hypotonia", sub: "“Floppy” but not severe", score: 1 },
+        { label: "Marked hypotonia or intermittent hypertonia", sub: "Back arching episodes may appear", score: 2 },
+        { label: "Sustained hypertonia / opisthotonus", sub: "Rigid arching", score: 3 },
+      ],
+    },
+    {
+      key: "cry",
+      name: "Cry",
+      hint: "Quality of cry.",
+      options: [
+        { label: "Normal cry", sub: "", score: 0 },
+        { label: "High-pitched cry (intermittent)", sub: "", score: 1 },
+        { label: "Persistent high-pitched / shrill cry", sub: "", score: 2 },
+        { label: "Inconsolable shriek OR weak/absent cry", sub: "Severe concern", score: 3 },
+      ],
+    },
+    {
+      key: "gaze",
+      name: "Gaze / oculomotor (optional)",
+      hint: "Eyes and tracking; adds sensitivity for advanced signs.",
+      options: [
+        { label: "Normal gaze / tracking", sub: "", score: 0 },
+        { label: "Occasional gaze abnormality", sub: "e.g., brief upward gaze", score: 1 },
+        { label: "Sustained upward gaze / oculomotor abnormality", sub: "", score: 2 },
+        { label: "“Setting sun” / severe gaze abnormality", sub: "Advanced sign", score: 3 },
+      ],
+    },
+  ];
 
-function bindRender(){
-  const host = el("bind-items");
-  if(!host) return;
-  host.innerHTML = "";
+  function bindRender(){
+    const host = el("bind-items");
+    if(!host) return;
+    host.innerHTML = "";
 
-  // Use the same tap-card renderer you already have for Ballard (renderCardGroup).
-  // We show no maneuver image here (text-only).
-  bindConfig.forEach(item => {
-    renderCardGroup(
-      host,
-      `bind_${item.key}`,
-      item.name,
-      item.hint || "",
-      item.options,
-      0,
-      false,
-      null
-    );
-  });
+    bindConfig.forEach(item => {
+      renderCardGroup(
+        host,
+        `bind_${item.key}`,
+        item.name,
+        item.hint || "",
+        item.options,
+        0,
+        false,
+        null,
+        calcBind
+      );
+    });
 
-  calcBind();
-}
-
-function bindGet(key){
-  return getGroupValue(`bind_${key}`);
-}
-
-function bindInterpret(total){
-  // Practical interpretation bands used in many teaching settings:
-  // 0 = none, 1–3 = mild, 4–6 = moderate, >=7 = severe (esp. if any "3" present)
-  if(total === 0) return { label: "No clinical BIND signs (0)", level: "ok" };
-  if(total <= 3) return { label: "Mild BIND (1–3)", level: "warn" };
-  if(total <= 6) return { label: "Moderate BIND (4–6)", level: "warn" };
-  return { label: "Severe BIND (≥7)", level: "warn" };
-}
-
-function calcBind(){
-  const total =
-    bindConfig.reduce((sum, item) => sum + bindGet(item.key), 0);
-
-  el("bindTotalOut").textContent = String(total);
-
-  const interp = bindInterpret(total);
-  el("bindInterpOut").textContent = interp.label;
-
-  const advice = el("bindAdvice");
-  advice.textContent = "";
-
-  // Escalation messaging (non-prescriptive, but appropriately urgent)
-  const anySevereItem = bindConfig.some(it => bindGet(it.key) >= 3);
-
-  if(total === 0){
-    advice.textContent = "No abnormal neuro signs on this score. Still manage jaundice based on TSB, GA, and risk factors.";
-    advice.className = "ok";
-    return;
+    calcBind();
   }
 
-  advice.className = "warn";
+  function bindGet(key){
+    return getGroupValue(`bind_${key}`);
+  }
 
-  if(total <= 3){
+  function bindInterpret(total){
+    if(total === 0) return { label: "No clinical BIND signs (0)", level: "ok" };
+    if(total <= 3) return { label: "Mild BIND (1–3)", level: "warn" };
+    if(total <= 6) return { label: "Moderate BIND (4–6)", level: "warn" };
+    return { label: "Severe BIND (≥7)", level: "warn" };
+  }
+
+  function calcBind(){
+    const total = bindConfig.reduce((sum, item) => sum + bindGet(item.key), 0);
+
+    el("bindTotalOut").textContent = String(total);
+
+    const interp = bindInterpret(total);
+    el("bindInterpOut").textContent = interp.label;
+
+    const advice = el("bindAdvice");
+    advice.textContent = "";
+
+    const anySevereItem = bindConfig.some(it => bindGet(it.key) >= 3);
+
+    if(total === 0){
+      advice.textContent = "No abnormal neuro signs on this score. Still manage jaundice based on TSB, GA, and risk factors.";
+      advice.className = "ok";
+      return;
+    }
+
+    advice.className = "warn";
+
+    if(total <= 3){
+      advice.textContent =
+        "Mild signs: repeat exam, review bilirubin trend and risk factors, and follow local phototherapy/exchange pathway urgently if rising/near threshold.";
+      return;
+    }
+
+    if(total <= 6){
+      advice.textContent =
+        "Moderate signs: urgent senior review. Treat as bilirubin neurotoxicity risk and follow local escalation pathway (often intensive phototherapy + workup; prepare for exchange if indicated).";
+      return;
+    }
+
     advice.textContent =
-      "Mild signs: repeat exam, review bilirubin trend and risk factors, and follow local phototherapy/exchange pathway urgently if rising/near threshold.";
-    return;
+      "Severe signs: emergency. Immediate senior/NRU review and manage per your local severe jaundice/neurotoxicity protocol (often includes preparation for exchange transfusion and intensive supportive care).";
+    if(anySevereItem){
+      advice.textContent += " (A score of 3 in any domain is particularly concerning.)";
+    }
   }
 
-  if(total <= 6){
-    advice.textContent =
-      "Moderate signs: urgent senior review. Treat as bilirubin neurotoxicity risk and follow local escalation pathway (often intensive phototherapy + workup; prepare for exchange if indicated).";
-    return;
-  }
-
-  // Severe
-  advice.textContent =
-    "Severe signs: emergency. Immediate senior/NRU review and manage per your local severe jaundice/neurotoxicity protocol (often includes preparation for exchange transfusion and intensive supportive care).";
-  if(anySevereItem){
-    advice.textContent += " (A score of 3 in any domain is particularly concerning.)";
-  }
-}
-
-// Hook BIND into calculator init
-bindRender();
+  bindRender();
 
   // ===================== GIR =====================
-  let gMode = "RATE"; // RATE, MLKD, TARGET
+  let gMode = "RATE";
   const g1 = el("g1"), g2 = el("g2"), g3 = el("g3");
   const girRateRow = el("girRateRow");
   const girMlkdRow = el("girMlkdRow");

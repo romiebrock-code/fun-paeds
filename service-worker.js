@@ -1,5 +1,5 @@
 /* service-worker.js */
-const CACHE = "fun-paeds-v17";
+const CACHE = "fun-paeds-v18";
 
 // Keep this list tight: app-shell essentials only.
 // (Anything else can still be cached at runtime.)
