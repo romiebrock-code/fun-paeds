@@ -718,7 +718,7 @@
 
 <script>
   // ===================== PWA SERVICE WORKER =====================
-  const SW_VER = "18";
+  const SW_VER = "19";
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -798,6 +798,16 @@
     const d = value - line;
     if(Math.abs(d) <= tol) return "ON";
     return d > 0 ? "ABOVE" : "BELOW";
+  }
+  function formatWeeksDays(weeksFloat){
+    if(weeksFloat == null || !Number.isFinite(weeksFloat)) return "—";
+    let weeks = Math.floor(weeksFloat);
+    let days = Math.round((weeksFloat - weeks) * 7);
+    if(days === 7){
+      weeks += 1;
+      days = 0;
+    }
+    return `${weeks}+${days} weeks`;
   }
 
   // ===================== FLUIDS =====================
@@ -1441,8 +1451,8 @@
     el("ballardNeuroOut").textContent = String(neuro);
     el("ballardPhysOut").textContent = String(phys);
     el("ballardTotalOut").textContent = String(total);
-    el("ballardGaOut").textContent = gaWeeks==null ? "—" : `${gaWeeks.toFixed(1)} weeks`;
-    el("ballardCgaOut").textContent = cgaWeeks==null ? "—" : `${cgaWeeks.toFixed(1)} weeks`;
+    el("ballardGaOut").textContent = formatWeeksDays(gaWeeks);
+    el("ballardCgaOut").textContent = formatWeeksDays(cgaWeeks);
   }
 
   el("ballardSex")?.addEventListener("change", renderBallard);
