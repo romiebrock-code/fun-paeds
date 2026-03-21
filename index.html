@@ -718,7 +718,7 @@
 
 <script>
   // ===================== PWA SERVICE WORKER =====================
-  const SW_VER = "19";
+  const SW_VER = "20";
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register(`./service-worker.js?v=${SW_VER}`).catch(()=>{});
   }
@@ -914,46 +914,66 @@
         : "Enter valid feed frequency.";
     }
 
-    if(fluidMode === "TARGET"){
-      const tfiVal = numOrNull(el("tfi").value);
-      const tfiUnit = el("tfiUnit").value;
+if(fluidMode === "TARGET"){
+  const tfiVal = numOrNull(el("tfi").value);
+  const tfiUnit = el("tfiUnit").value;
 
-      const tfiDaily = (tfiVal != null)
-        ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal)
-        : null;
+  const tfiDaily = (tfiVal != null)
+    ? (tfiUnit === "hour" ? tfiVal * 24 : tfiVal)
+    : null;
 
-      if(wKg != null && tfiDaily != null){
-        totalTargetDay = wKg * tfiDaily;
-        totalTargetHr = totalTargetDay / 24;
-      }
+  // ================= TOTAL TARGET =================
+  if(wKg != null && tfiDaily != null){
+    totalTargetDay = wKg * tfiDaily;
+    totalTargetHr = totalTargetDay / 24;
+  }
 
-      if(targetEbmMode.value === "feed"){
-        const v = clamp0(numOrNull(el("targetEbmFeed").value));
-        if(v != null){
-          ebmFeedOut = v;
-          if(feedsPerDay != null){
-            ebmDay = v * feedsPerDay;
-          }
-        }
-      } else {
-        const v = clamp0(numOrNull(el("targetEbmDay").value));
-        if(v != null){
-          ebmDay = v;
-          if(feedsPerDay != null && feedsPerDay > 0){
-            ebmFeedOut = v / feedsPerDay;
-          }
-        }
-      }
+  // ================= DEFAULT: FULL EBM =================
+  let userProvidedEbm = false;
 
-      if(totalTargetDay != null){
-        ivfDay = Math.max(0, totalTargetDay - (ebmDay ?? 0));
-        ivfRate = ivfDay / 24;
-
-        if((ebmDay ?? 0) > totalTargetDay){
-          warn.textContent = "EBM exceeds target total — IVF set to 0.";
-        }
+  if(targetEbmMode.value === "feed"){
+    const v = clamp0(numOrNull(el("targetEbmFeed").value));
+    if(v != null){
+      userProvidedEbm = true;
+      ebmFeedOut = v;
+      if(feedsPerDay != null){
+        ebmDay = v * feedsPerDay;
       }
     }
+  } else {
+    const v = clamp0(numOrNull(el("targetEbmDay").value));
+    if(v != null){
+      userProvidedEbm = true;
+      ebmDay = v;
+      if(feedsPerDay != null && feedsPerDay > 0){
+        ebmFeedOut = v / feedsPerDay;
+      }
+    }
+  }
+
+  // ================= AUTO-SUGGEST EBM =================
+  if(!userProvidedEbm && totalTargetDay != null && feedsPerDay != null){
+    ebmDay = totalTargetDay;
+    ebmFeedOut = totalTargetDay / feedsPerDay;
+  }
+
+  // ================= IVF CALCULATION =================
+  if(totalTargetDay != null){
+    if(userProvidedEbm){
+      ivfDay = Math.max(0, totalTargetDay - (ebmDay ?? 0));
+      ivfRate = ivfDay / 24;
+
+      if((ebmDay ?? 0) > totalTargetDay){
+        warn.textContent = "EBM exceeds target total — IVF set to 0.";
+      }
+    } else {
+      // Default state → hide IVF
+      ivfDay = null;
+      ivfRate = null;
+    }
+  }
+}
+
 
     if(fluidMode === "REVERSE"){
       const rMode = reverseMode.value;
